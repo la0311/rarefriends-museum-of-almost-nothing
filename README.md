@@ -2,13 +2,13 @@
 
 A first playable, session-only museum starring your selected canonical Rare Friend.
 
-**Phase 3B: G1 owner-validated; bounded G2 implementation authorized.**
+**Phase 3B: G2 minimum complete; owner G2 playtest required.**
 
 ## Public preview
 
-[Play the G1 preview](https://la0311.github.io/rarefriends-museum-of-almost-nothing/)
+[Play the G2 preview](https://la0311.github.io/rarefriends-museum-of-almost-nothing/)
 
-G1 preview passed owner real-wallet playtests on desktop and mobile; eligible Friend wallet required.
+The G1 preview passed owner real-wallet playtests on desktop and mobile. The updated G2 preview needs an owner playtest; an eligible Friend wallet is required.
 
 ## Run
 
@@ -23,15 +23,17 @@ Open http://127.0.0.1:4173 in a browser with the eligible wallet extension. The 
 
 This machine uses a local npm download because npm was absent from PATH: `node .tooling/package/bin/npm-cli.js run dev`. That ignored tooling folder is not needed on a machine with npm installed. Native Windows verification passed with esbuild/browser processes outside the filesystem sandbox; the upstream documented Windows route is Ubuntu/WSL2.
 
-## First playable
+## Playable session
 
-Buy permit → Send expedition → settle → reveal actual owned object → Keep → Place on plinth 1 → Begin tour → Direct Friend to plinth 1 → Present → Opening Remarks.
+Buy permit → Send expedition → settle → reveal an owned object → Keep or redeem → arrange up to three plinths → choose a feasible brief → direct your Friend to each occupied plinth → explicitly Present → start a Final Exhibition when ready.
 
-Tab and Enter/Space or pointer/touch operate the same visible controls. The Friend changes position immediately; arrival never presents automatically. Runtime menus pause local gameplay. There is no audio. The desktop frame is 960 × 640; the narrow host frame grows vertically so the G1 controls remain visible without scrolling inside the game.
+Tab and Enter/Space or pointer/touch operate the same visible controls. Select an owned type, select a numbered plinth, then Place or Replace; Remove returns a copy to undisplayed stock. The tray shows Owned, Displayed and Available quantities. Opening Remarks uses one object; A Remarkable Resemblance uses two identical copies; Two Entirely Different Things uses two different types. Pair briefs require the left occupied plinth to be presented before the right. The Friend changes position only when directed; arrival never presents automatically. Failed tours and retries cost nothing.
+
+Redeem acts on one aggregate copy through runtime confirmation. Undisplayed stock is used first; if every copy is displayed, the highest-numbered matching plinth clears after the SDK state is re-read. Final Exhibition adapts to one, two or three owned copies and closes with the displayed collection, presentation order and current simulated RF. Runtime menus pause local gameplay. There is no audio. The desktop frame is 960 × 640; the narrow host frame grows vertically so required current-state actions remain visible without game scrolling.
 
 RF is simulated. Keep, placement and tours make no economic mutations. The SDK owns aggregate inventory. Full runtime reload resets the session; child reload re-reads retained ledger state but does not restore local arrangements.
 
-Provisional G1 economics: 6 RF per permit; Pebble 40% / fixed 2 RF, Twig 35% / fixed 2 RF, Paperclip 15% / fixed 3 RF, Button 10% / fixed 4 RF. These are the configured redemption terms; G1 does not expose redemption. Bounded balance review belongs to G2.
+Final G2 economics: 6 RF per permit; Pebble 40% / fixed 2 RF, Twig 35% / fixed 2 RF, Paperclip 15% / fixed 3 RF, Button 10% / fixed 4 RF. The initial 20 RF funds three permits (18 RF), leaving 2 RF. Two ordinary 2 RF redemptions can fund another permit; weighted expected redemption is 2.35 RF, below the 6 RF permit. Tour results never change RF, odds or values.
 
 ## Checks
 
@@ -40,6 +42,7 @@ npm run typecheck
 npm run check
 npm run build
 npm run test:game
+node tests/museum-rules.mjs
 ```
 
 Browser testing additionally needs `npx playwright install chromium --only-shell`. The test uses the normal SDK runtime with automated-only mock identity/RPC/artwork responses; no mock bypass is included in dev or public builds.
@@ -48,4 +51,4 @@ FriendSDK **0.1.4**, upstream commit **ca3bf183b809ecf22d87c63d88ce03969a3f8da2*
 
 Canonical Friend artwork: Rare Friends via the SDK sprite API; see the installed SDK NOTICE.md. Object silhouettes and museum interface are project-authored CSS.
 
-Start the canonical context at [CONTEXT_INDEX](docs/vibeathon/CONTEXT_INDEX.md). [STATUS](docs/vibeathon/STATUS.md) records progress; [ROADMAP](docs/vibeathon/ROADMAP.md) controls scope. GitHub Pages hosts the G1 preview; no completed submission is claimed.
+Start the canonical context at [CONTEXT_INDEX](docs/vibeathon/CONTEXT_INDEX.md). [STATUS](docs/vibeathon/STATUS.md) records progress; [ROADMAP](docs/vibeathon/ROADMAP.md) controls scope. GitHub Pages hosts the G2 playtest preview; G3 shipping and submission are not complete.

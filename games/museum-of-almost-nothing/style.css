@@ -19,9 +19,16 @@ h2 { margin: 0 0 5px; font-size: 19px; font-weight: normal; }
 .inscription { position: absolute; top: 13px; left: 0; right: 0; color: #645d4d; font-size: 13px; font-style: italic; }
 .brief { position: absolute; top: 35px; left: 12px; right: 12px; }
 .brief p { margin: 0; font: 13px/1.25 Arial, sans-serif; }
-.exhibit { position: absolute; top: 105px; left: 50%; width: 250px; transform: translateX(-50%); }
-.exhibit > p { margin: 5px 0; font: 12px/1.2 Arial, sans-serif; }
-.plinth { width: 104px; height: 62px; margin: 0 auto; display: grid; place-items: center; border: 1px solid #b6ab94; border-bottom: 5px solid #c8bfa8; background: #faf4e7; color: #706953; font-size: 13px; }
+.exhibits { position: absolute; top: 95px; left: 12%; right: 12%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.exhibit { position: relative; min-width: 0; min-height: 0; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 0; background: transparent; color: #302e25; }
+.exhibit:hover:not(:disabled) { background: transparent; }
+.exhibit.chosen .plinth, .exhibit:focus-visible .plinth { border-color: #926925; background: #fff9e9; }
+.exhibit.presented .plinth { background: #e4e1c7; }
+.exhibit-art { height: 38px; display: grid; align-items: end; }
+.exhibit-art .object { margin-bottom: 2px; }
+.plinth { width: min(100%, 104px); height: 49px; display: grid; place-items: center; border: 1px solid #b6ab94; border-bottom: 5px solid #c8bfa8; background: #faf4e7; color: #706953; font: 13px Georgia, serif; }
+.exhibit-label { max-width: 100%; min-height: 15px; font: 11px/1.15 Arial, sans-serif; }
+.order-marker { position: absolute; top: 20px; right: 6%; width: 22px; height: 22px; border-radius: 50%; background: #45523f; color: #fff; font: bold 13px/22px Arial, sans-serif; }
 .object { position: relative; display: block; width: 42px; height: 30px; margin: 0 auto 4px; }
 .pebble { width: 43px; height: 26px; border: 2px solid #50564e; border-radius: 48% 40% 30% 35%; background: #77796d; box-shadow: inset 0 4px #a6a89a; }
 .twig { width: 7px; height: 33px; border-radius: 2px; background: #80562f; transform: rotate(25deg); }
@@ -30,15 +37,19 @@ h2 { margin: 0 0 5px; font-size: 19px; font-weight: normal; }
 .paperclip:after { content: ''; position: absolute; inset: 3px; border: 1px solid #adb7b3; border-radius: 5px; }
 .button { width: 32px; height: 32px; border: 2px solid #807758; border-radius: 50%; background: #eadbab; }
 .button:after { content: '∷'; position: absolute; inset: -6px 0 0; color: #544d38; font: bold 30px Georgia; }
-.friend { position: absolute; bottom: 10px; left: 27%; width: 72px; height: 72px; fill: #302e25; shape-rendering: crispEdges; }
-.friend.at-plinth { left: calc(50% - 36px); bottom: 4px; }
+.friend { position: absolute; z-index: 1; bottom: 6px; left: 5%; width: 60px; height: 60px; fill: #302e25; shape-rendering: crispEdges; }
+.friend.at-plinth { bottom: 2px; }
 
 .controls { min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 0 0; text-align: center; }
 .instruction { min-height: 16px; margin: 0; font: 13px/1.25 Arial, sans-serif; }
-.actions, .collection { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; width: 100%; }
+.actions, .collection, .brief-options { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; width: 100%; }
 .collection { margin: 2px 0 0; }
-.collection button, .secondary { background: transparent; color: #302e25; }
-.collection button:hover:not(:disabled), .secondary:hover:not(:disabled) { background: #dfd5c0; }
+.collection button { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.inventory-name { font-weight: 600; }
+.inventory-count { font-size: 10px; font-weight: 400; }
+.collection button, .secondary, .brief-options button { background: transparent; color: #302e25; }
+.collection button:hover:not(:disabled), .secondary:hover:not(:disabled), .brief-options button:hover:not(:disabled) { background: #dfd5c0; }
+.destination-prompt { align-self: center; font: 12px/1.2 Arial, sans-serif; }
 .reveal { width: 100%; display: grid; grid-template-columns: 45px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #b6ab94; background: #faf5e9; text-align: left; }
 .reveal h2 { font-size: 18px; }
 .reveal p { margin: 3px 0; font: 12px/1.25 Arial, sans-serif; }
@@ -47,6 +58,9 @@ h2 { margin: 0 0 5px; font-size: 19px; font-weight: normal; }
 .result strong { font-size: 17px; font-weight: normal; }
 .result p { display: inline; margin: 0 8px; font-size: 12px; }
 .result b { display: block; margin-top: 3px; font: 600 12px Arial, sans-serif; }
+.result small { display: block; margin-top: 4px; font: 11px/1.2 Arial, sans-serif; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+.dialog-actions button { margin: 0; }
 .terms-toggle { min-height: 24px; padding: 2px 6px; border: 0; background: transparent; color: #55492f; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
 .terms-toggle:hover:not(:disabled) { background: #dfd5c0; }
 
@@ -68,15 +82,26 @@ h2 { margin: 0 0 5px; font-size: 19px; font-weight: normal; }
   .inscription { display: none; }
   .brief { top: 8px; left: 8px; right: 8px; }
   .brief p { font-size: 11px; }
-  .exhibit { top: 65px; }
-  .plinth { width: 90px; height: 48px; }
-  .friend { left: 12%; bottom: 8px; width: 50px; height: 50px; }
-  .friend.at-plinth { left: calc(50% - 25px); bottom: 4px; }
+  .exhibits { top: 43px; left: 3%; right: 3%; gap: 2px; }
+  .exhibit { gap: 1px; }
+  .exhibit-art { height: 29px; }
+  .exhibit-art .object { transform: scale(.72); transform-origin: bottom center; margin: 0; }
+  .plinth { width: 76px; height: 25px; border-bottom-width: 3px; }
+  .exhibit-label { min-height: 20px; max-width: 94px; font-size: 9px; }
+  .order-marker { top: 8px; right: 2%; width: 18px; height: 18px; font-size: 11px; line-height: 18px; }
+  .friend { left: 2%; bottom: 0; width: 35px; height: 35px; }
+  .friend.at-plinth { bottom: 0; }
   .controls { gap: 4px; padding-top: 5px; }
   .instruction { min-height: 14px; font-size: 11px; line-height: 1.2; }
-  button { min-height: 40px; padding: 7px 9px; font-size: 12px; }
+  button { min-height: 31px; padding: 5px 7px; font-size: 11px; }
+  .actions, .brief-options { gap: 4px; }
+  .actions button { min-height: 31px; }
   .collection { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
-  .collection button { min-height: 34px; padding: 4px 5px; }
+  .collection button { min-height: 31px; padding: 3px 4px; }
+  .inventory-name { font-size: 10px; }
+  .inventory-count { font-size: 9px; }
+  .brief-options button { min-height: 29px; font-size: 10px; }
+  .economy button { min-height: 31px; }
   .reveal { grid-template-columns: 35px minmax(0, 1fr); gap: 5px; padding: 6px 8px; }
   .reveal h2 { font-size: 16px; }
   .reveal p { font-size: 11px; }
@@ -84,8 +109,9 @@ h2 { margin: 0 0 5px; font-size: 19px; font-weight: normal; }
   .reveal small { display: none; }
   .result { padding: 5px 8px; }
   .result strong { font-size: 14px; }
-  .result p { display: none; }
+  .result p { display: block; margin: 2px 0; font-size: 10px; }
   .result b { font-size: 11px; }
+  .result small { font-size: 10px; }
   .terms { padding: 12px; }
   .terms p { font-size: 12px; }
   .terms-list p { display: block; }

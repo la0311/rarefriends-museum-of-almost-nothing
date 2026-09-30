@@ -326,3 +326,13 @@ Paths in SOURCE are relative to docs/vibeathon unless noted. The Phase 1D instru
 - STATUS: G1 PASS; G2 AUTHORIZED — owner G2 playtest still required
 - SOURCE: Explicit Phase 3B owner instruction, 2026-09-30.
 - BOUNDARY: Simulated RF only. Complete minimum G2, deploy once through the existing gh-pages path, then stop before G3 or optional polish.
+
+## D-033
+
+- ID: D-033
+- DATE: 2026-09-30
+- DECISION: Finalize the G2 prototype economy at 6 RF per permit; Pebble/Twig/Paperclip/Button weights 40/35/15/10% and fixed redemption values 2/2/3/4 RF. Implement one adaptive Final Exhibition: one centered copy, two copies using their applicable relationship and left-before-right order, or three owned copies on all plinths with the center presented last.
+- RATIONALE: The existing terms yield three initial expeditions, make ordinary duplicate redemption useful for a fourth, and keep expected redemption at 2.35 RF below the 6 RF permit. A single three-plinth finale honors the later Phase 3B requirement without the optional three-variant catalog.
+- STATUS: G2 MINIMUM IMPLEMENTED — owner playtest required
+- SOURCE: Explicit Phase 3B owner instruction and PRODUCT_SPEC.md deadline overlay.
+- BOUNDARY: These are simulated RF terms and local tour rules only; no odds adjustment, tour reward or additional system.
