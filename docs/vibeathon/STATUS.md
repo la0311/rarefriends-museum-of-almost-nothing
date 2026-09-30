@@ -3,20 +3,21 @@
 Updated: 2026-09-30
 
 PROJECT: Museum of Almost Nothing
-CURRENT PHASE: Phase 3B — G2 Minimum Viable Vibeathon Game
-STATE: G2 minimum validated; owner G2 playtest required
+CURRENT PHASE: Phase 3B.1 — Token Activity Pass
+STATE: Token Activity pass validated and public; owner Token Activity playtest required
 ROADMAP: AUTHORED
-IMPLEMENTATION: G2 MINIMUM COMPLETE
+IMPLEMENTATION: PHASE 3B.1 COMPLETE
 DEADLINE MODE: ACTIVE
 CURRENT GATE: G2 — Minimum Viable Vibeathon Game
 G0: PASS
 G1: PASS — REAL WALLET VERIFIED DESKTOP + MOBILE
-G2: PASS — OWNER PLAYTEST REQUIRED
+G2: PASS
+TOKEN ACTIVITY PASS: PASS — OWNER PLAYTEST REQUIRED
 G3: NOT STARTED
 FIRST PLAYABLE: AVAILABLE
 MOBILE: PASS — owner real-wallet playtest
-NEXT: Owner G2 playtest, then immediate G3 shipping
-NEXT ACTION: Owner checks curation, duplicates, Keep/Redeem, Friend agency and finale
+NEXT: Owner Token Activity playtest → G3 Ship
+NEXT ACTION: Owner checks target clarity, repeat-expedition motivation, Keep/Redeem influence, Collection/Actions separation, finale payoff and simulated summary
 
 SELECTED CONCEPT: Museum of Almost Nothing
 SDK: v0.1.4
@@ -26,11 +27,11 @@ REAL-WALLET GAMEPLAY VERIFIED: PASS — owner-reported desktop and mobile
 REAL_WALLET_DESKTOP: PASS — owner-reported
 REAL_WALLET_MOBILE: PASS — owner-reported
 PUBLIC PREVIEW: AVAILABLE — https://la0311.github.io/rarefriends-museum-of-almost-nothing/
-PUBLIC PREVIEW REVISION: gh-pages f3d17dca822e436220c50019d3718696cab25bb5
+PUBLIC PREVIEW REVISION: gh-pages a8e742c70b36beb5cf9c28ff36844ed2ace878a8
 
 ## Execution
 
-Latest owner instruction authorizes bounded G2 and reports completed G1 real-wallet playtests on desktop and mobile. G0, G1 and minimum G2 technical acceptance pass. Owner G2 playtest remains a separate checkpoint before G3.
+Latest owner instruction authorizes Phase 3B.1 and reports the G2 game technically correct and eligible real-wallet play passing on desktop and mobile. G0, G1, G2 and the Phase 3B.1 technical pass are complete. The new Token Activity flow still needs the owner's real-wallet playtest before G3.
 
 Existing clean baseline commit: fb1a6a7ddce82edff11d0e1421d9f9db0ba49835. Verified G1/G1.1 changes and owner validation were checkpointed locally as 54fd0fa. D-030 authorized G1 preview publishing; the Phase 3B instruction authorized the G2 preview.
 
@@ -48,7 +49,7 @@ Official v0.1.4 release tag resolves to the pinned commit. Downloaded archive SH
 
 ## Owner checkpoint
 
-Evaluate three-plinth curation, Owned/Displayed clarity, duplicate usefulness, Keep/Redeem consequences, destination + Present agency, and whether the Final Exhibition feels like a natural ending. Stop before G3 until the owner G2 playtest is reported.
+Evaluate only: whether the active target is immediately obvious; why another expedition may help; whether the target influences Keep versus Redeem; whether collecting feels like a set hunt; whether Collection and Actions are distinct; whether the Final Exhibition pays off; and whether the simulated Token Activity summary is clear and honest. Stop before G3 until this owner playtest is reported.
 
 ## Current limitations / validation debt
 
@@ -58,6 +59,7 @@ Evaluate three-plinth curation, Owned/Displayed clarity, duplicate usefulness, K
 - Final G2 terms: permit 6 RF; weights 40/35/15/10%; fixed values 2/2/3/4 RF. Weighted expected redemption 2.35 RF. Initial 20 RF funds three permits and leaves 2 RF; two common 2 RF redemptions can fund another permit, subject to SDK backing.
 - Native Windows esbuild failed inside filesystem sandbox, passed outside it. Matching Playwright Chromium installed. No Ubuntu WSL distribution available. Unrelated historical SDK Windows failures were not rerun or repaired.
 - Full runtime reset loses session; child reload loses local placement/tour. Uncertain read failure blocks mutations pending successful Retry; no automatic economic retry.
+- In Phase 3B.1, a child-only reload also rerolls the local target and loses local Token Activity counters while the SDK ledger survives. Random outcomes plus the unchanged 20 simulated RF opening balance can leave a target unattainable in a particular session; no compensating economy or fallback finale was authorized.
 - Event cutoff/timezone, source publication and submission fields still need shipping-phase verification. G1 public preview deployment was authorized separately under D-030; G2 is now authorized.
 
 ## G1 GitHub Pages preview
@@ -85,3 +87,13 @@ Owner playtest found the original desktop terms overflowing and the original 360
 - Scope cuts: audio, decorative movement/spotlight polish, optional three-copy final brief variants, advanced recovery prose. No G3 submission claim.
 - G2 static build published once to gh-pages as f3d17dca822e436220c50019d3718696cab25bb5. Public index.html, game.js and game.css SHA-256 match the local G2 build. Clean public Chromium visits at 960px and 360px returned HTTP 200, loaded the normal wallet/Friend gate and reported no console or page errors. The public URL is the owner G2 playtest candidate.
 - [Detailed G2 evidence](evidence/PHASE_3B.md).
+
+## Phase 3B.1 Token Activity validation
+
+- One randomized local Secret Exhibition target replaces the selectable brief buttons and adaptive finale. THE ECHO requires A/A/B and the different object Presented last; THE VARIETY requires A/B/C and permits any Present order. The target rule and live ownership/display checklist sit above the museum room. Collection and contextual Actions are separate; reveal exposes both Keep and Redeem. The existing player-directed tour and free retry remain.
+- Confirmed local activity records permits purchased, expeditions settled, simulated RF spent on permits, simulated RF returned through redemption and objects redeemed. The final DOM tableau derives net simulated RF spent and explicitly says no live RF was burned or spent. No persistence, backend or live-chain path was added.
+- `node tests/museum-rules.mjs`, `npm run typecheck`, `npm run check`, `npm run build`: PASS. FriendSDK check retained 2.35 RF expected fixed redemption; `game.json` still has 6 RF permit and Pebble/Twig/Paperclip/Button 40/35/15/10% with 2/2/3/4 RF values.
+- `node tests/museum.mjs`: PASS for both deterministic targets at 960px keyboard and 360px touch. Coverage includes cancelled buy/redeem, duplicate-action lock, confirmed activity counts, target readiness and loss after redemption, Echo failure/free retry, Variety any-order success, player-directed Friend, pause, no tour economy mutation and per-state frame fit without child scroll.
+- Visual evidence: [Echo mobile collection](evidence/token-activity-echo-collection-360.png), [Variety mobile collection](evidence/token-activity-variety-collection-360.png), [Echo mobile finale](evidence/token-activity-echo-finale-360.png), [Variety desktop finale](evidence/token-activity-variety-finale-960.png).
+- Static build published to the existing gh-pages root as `a8e742c70b36beb5cf9c28ff36844ed2ace878a8`. `node tests/public-preview.mjs`: PASS; public `index.html`, `game.js`, `game.css`, `runtime.js` and `runtime.css` SHA-256 hashes match the validated build, all HTTP 200. Public Chromium at 960×640 and 360×480 shows the normal wallet gate, with no browser errors. Headless public checking cannot use an eligible wallet; owner real-wallet evaluation of the new target flow remains the next checkpoint. URL: https://la0311.github.io/rarefriends-museum-of-almost-nothing/.
+- G3 has not started. The older Phase 3B brief/finale notes above document the previous preview; D-034 and PRODUCT_SPEC.md's Phase 3B.1 section are current.

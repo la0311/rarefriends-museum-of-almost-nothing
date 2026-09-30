@@ -336,3 +336,13 @@ Paths in SOURCE are relative to docs/vibeathon unless noted. The Phase 1D instru
 - STATUS: G2 MINIMUM IMPLEMENTED — owner playtest required
 - SOURCE: Explicit Phase 3B owner instruction and PRODUCT_SPEC.md deadline overlay.
 - BOUNDARY: These are simulated RF terms and local tour rules only; no odds adjustment, tour reward or additional system.
+
+## D-034
+
+- ID: D-034
+- DATE: 2026-09-30
+- DECISION: Make Token Activity the primary Vibeathon category focus. Replace selectable briefs and the adaptive finale with one randomized, visible Secret Exhibition target per runtime session: THE ECHO (A/A/B, different object Presented last) or THE VARIETY (A/B/C, any Present order). Use that target to drive repeated simulated RF spending/recycling, Keep/Redeem decisions and the Final Exhibition.
+- RATIONALE: Owner playtesting found the G2 game technically sound but too flat, and the brief selector cluttered the collection and action controls. A single collection hunt gives subsequent expeditions and redemption a clear purpose.
+- STATUS: PHASE 3B.1 AUTHORIZED — owner Token Activity playtest required before G3
+- SOURCE: Explicit Phase 3B.1 owner instruction, 2026-09-30.
+- BOUNDARY: Keep FriendSDK v0.1.4, the 6 RF permit and 40/35/15/10% with 2/2/3/4 RF fixed redemption values unchanged. Track confirmed session activity locally and label all RF simulated. No leaderboard, backend, persistence, new currency, live contracts, export, or broad redesign. Publish through the existing GitHub Pages preview, then stop for owner playtest.

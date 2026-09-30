@@ -15,6 +15,21 @@ The explicit 2026-09-30 owner instruction and D-029 authorize the four-gate road
 - Sophisticated recovery messages and extra test coverage may be cut. Uncertain mutations still require re-read/reconciliation; unsupported pending recovery must block new expeditions safely and be documented, never duplicate a play or invent inventory.
 
 All other locked identity, aggregate inventory, economy separation, three-plinth/four-object, session-only, keyboard/touch and pause rules remain binding. Record actual cuts and never claim unimplemented reference features shipped.
+
+## Phase 3B.1 active Secret Exhibition model
+
+The owner's Phase 3B.1 Token Activity instruction and D-034 supersede the selectable briefs, staged tours and adaptive finale described in the historical reference sections below. The shipped player flow has **one locally randomized Secret Exhibition target per fresh runtime session**. A full runtime reload may choose another target; no target, placement, tour or activity counter persistence is added. The target and its complete rule stay visible in a compact informational panel; there are no brief-selection buttons.
+
+| Target | Owned collection can finish when | Display and tour rule |
+|---|---|---|
+| **THE ECHO** | One outcome has at least two aggregate copies and another outcome has at least one. | Display exactly A/A/B across three plinths, then explicitly Present the different B last. |
+| **THE VARIETY** | At least three different outcome IDs are owned. | Display exactly three different outcomes across three plinths. Any explicit Present order succeeds. |
+
+The player sees live target checklist progress, collects via the unchanged 6 simulated RF permit and SDK expedition, and chooses Keep or one-copy Redeem after a settled reveal. Keep is local and makes no SDK mutation. Redemption uses the existing fixed value, then reconciles displayed aggregate quantities; it can remove target readiness. Once ownership can satisfy the target, **Prepare Final Exhibition** appears. **Begin Final Exhibition** is enabled when the three displayed slots match. The Friend's destinations and actual Present order remain player directed. A missed Echo order has a free retry. Tour results never change SDK economy.
+
+The UI order is compact header → Secret Exhibition target → museum room → owned Collection → contextual Actions. During reveal and tour, inactive collection/actions are hidden. Session Token Activity counts only confirmed permit purchases, settled expeditions and redemptions, displaying simulated RF spent, simulated RF redeemed, objects redeemed and net simulated RF spent. Counters are local and can be lost on child-only reload even if the SDK ledger survives. The successful DOM closing tableau names the Friend, target and displayed objects and states: **“FriendSDK simulated economy — no live RF was burned or spent.”** No leaderboard, backend, persistence, score, extra currency, certificate export or live-chain behavior is authorized.
+
+The older first-minute walkthrough, brief catalog, adaptive finale, screenshots and related acceptance examples below are retained as historical design context. They are **not active runtime requirements** where they conflict with this section.
 ## A. PRODUCT THESIS
 
 **Ordinary objects become worth keeping when the player can give them a small, personal moment of importance.**

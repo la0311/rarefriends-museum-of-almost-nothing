@@ -3,21 +3,14 @@ import type { GameComponentProps } from '@rarefriends/friendsdk/runtime';
 import { RF, type GameSnapshot } from '@rarefriends/friendsdk/game';
 import { createFriendReader, spriteFrame, type GenerationSprites } from '@rarefriends/friendsdk/sprites';
 import { objects } from './catalog';
-import { assign, available, displayed, emptySlots, evaluateBrief, evaluateFinale, feasible, finaleTarget, offeredBriefs, reconcile, redeemAffectedPlinth, type Brief, type Slots } from './rules';
+import { assign, available, displayReady, displayed, echoDisplay, echoOwnership, emptyActivity, emptySlots, evaluateExhibition, pickSecretTarget, reconcile, recordActivity, redeemAffectedPlinth, targetReady, varietyDisplay, varietyOwnership, type SecretTarget, type Slots } from './rules';
 import './style.css';
 
 type Tour = 'curate' | 'entrance' | 'at-plinth' | 'complete' | 'closed';
-const briefNames: Record<Brief, string> = {
-  opening: 'Opening Remarks',
-  resemblance: 'A Remarkable Resemblance',
-  different: 'Two Entirely Different Things',
-};
-const briefDirections: Record<Brief, string> = {
-  opening: 'Display exactly one object and Present it.',
-  resemblance: 'Display exactly two of the same type; Present left before right.',
-  different: 'Display exactly two different types; Present left before right.',
-};
+const targetNames: Record<SecretTarget, string> = { echo: 'THE ECHO', variety: 'THE VARIETY' };
+const targetFlavors: Record<SecretTarget, string> = { echo: 'Two things agree. One does not.', variety: 'Three unrelated things have been asked to share a room.' };
 const amount = (value: bigint) => String(value / RF) + (value % RF ? '.' + (value % RF).toString().padStart(18, '0').replace(/0+$/, '') : '');
+const countLabel = (count: number, singular: string, plural = singular + 's') => `${count} ${count === 1 ? singular : plural}`;
 function ObjectArt({ id }: { id: number }) {
   return <span aria-hidden="true" className={'object ' + objects[id - 1].shape} />;
 }
@@ -34,8 +27,8 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
   const [selected, setSelected] = useState<number | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
   const [slots, setSlots] = useState<Slots>(emptySlots);
-  const [brief, setBrief] = useState<Brief | null>('opening');
-  const [completedTours, setCompletedTours] = useState(0);
+  const [target, setTarget] = useState<SecretTarget>(pickSecretTarget);
+  const [activity, setActivity] = useState(emptyActivity);
   const [finale, setFinale] = useState(false);
   const [tour, setTour] = useState<Tour>('curate');
   const [tourSlots, setTourSlots] = useState<Slots | null>(null);
@@ -49,6 +42,7 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
   const termsButton = useRef<HTMLButtonElement>(null);
   const redeemButton = useRef<HTMLButtonElement>(null);
   const mounted = useRef(true);
+  const countedSettlements = useRef(new Set<bigint>());
   const stopped = paused || hidden;
   const canInteract = !stopped && !busy && !readError && !terms && redeemPreview === null && !!snapshot && !!sprites;
   const inventory: readonly bigint[] = snapshot?.inventory ?? [0n, 0n, 0n, 0n];
@@ -57,8 +51,17 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
   const activeTour = tour === 'entrance' || tour === 'at-plinth';
   const currentSlots = tourSlots && tour !== 'curate' ? tourSlots : slots;
   const occupied = currentSlots.map((id, index) => id === null ? -1 : index + 1).filter(index => index > 0);
-  const offered = offeredBriefs(inventory, completedTours);
-  const finalTarget = finaleTarget(inventory);
+  const ownershipReady = targetReady(target, inventory);
+  const arrangementReady = displayReady(target, slots);
+  const echoOwned = echoOwnership(inventory);
+  const varietyOwned = varietyOwnership(inventory);
+  const echoArranged = echoDisplay(slots);
+  const netSpent = activity.simulatedRfSpent - activity.simulatedRfRedeemed;
+  const countSettlement = (id: bigint) => {
+    if (countedSettlements.current.has(id)) return;
+    countedSettlements.current.add(id);
+    setActivity(current => recordActivity(current, 'settle'));
+  };
 
   const apply = (state: GameSnapshot) => {
     if (!mounted.current) return;
@@ -68,13 +71,13 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
     setSlots(previous => reconcile(state.inventory, previous));
     setSelected(id => id && state.inventory[id - 1] > 0n ? id : null);
     setReveal(id => id && state.inventory[id - 1] > 0n ? id : null);
-    setBrief(current => current && feasible(state.inventory, current) ? current : completedTours === 0 && feasible(state.inventory, 'opening') ? 'opening' : null);
+    if (!targetReady(target, state.inventory)) setFinale(false);
   };
   const read = async () => { const state = await client.read(); apply(state); return state; };
   useEffect(() => {
     mounted.current = true;
     setSnapshot(undefined); setSlots(emptySlots()); setSelected(null); setSelectedSlot(null);
-    setReveal(null); setBrief('opening'); setCompletedTours(0); setFinale(false);
+    setReveal(null); setTarget(pickSecretTarget()); setActivity(emptyActivity()); countedSettlements.current.clear(); setFinale(false);
     setTour('curate'); setTourSlots(null); setDestination(null); setOrder([]); setResult(null);
     read().then(() => { if (mounted.current) setMessage('Fund your first expedition.'); })
       .catch(() => { if (mounted.current) { setReadError(true); setMessage('Collection unavailable. Retry before continuing.'); } });
@@ -92,14 +95,13 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
   }, []);
 
   async function action(kind: 'buy' | 'play' | 'resume' | 'read') {
-    if (locked.current || stopped || (kind !== 'read' && (!canInteract || tour !== 'curate' || finale))) return;
+    if (locked.current || stopped || (kind !== 'read' && (!canInteract || tour !== 'curate' || reveal !== null))) return;
+    let actionPlayId: bigint | null = null;
     locked.current = true; setBusy(true);
     setMessage(kind === 'buy' ? 'Confirm your permit in the runtime.' : kind === 'read' ? 'Checking your collection…' : 'Preparing your expedition…');
     try {
       if (kind === 'read') {
-        const state = await read();
-        if (brief && !feasible(state.inventory, brief)) { setBrief(null); setMessage('Collection changed; selected brief is no longer feasible. Choose another.'); }
-        else setMessage('Collection checked.');
+        await read(); setMessage('Collection checked.');
         return;
       }
       if (client.mode !== 'preview') throw new Error('Preview only');
@@ -108,7 +110,7 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
         if (state.plays.some(play => play.outcomeId === null) || state.consumables > 0n) { setMessage('Use your existing expedition before buying another permit.'); return; }
         if (state.rfBalance < client.definition.price) { setMessage('Not enough simulated RF. You can curate or redeem a copy.'); return; }
         if (!await client.canBuy(1n)) { setMessage('The simulation cannot back another permit. You can still curate.'); return; }
-        await client.buy(1n); await read(); setMessage('One permit ready. Send your expedition.'); return;
+        await client.buy(1n); setActivity(current => recordActivity(current, 'buy', client.definition.price)); await read(); setMessage('One permit ready. Send your expedition.'); return;
       }
       let play = state.plays.find(item => item.outcomeId === null);
       if (!play && kind === 'resume') { setMessage('No pending expedition. Collection checked.'); return; }
@@ -117,16 +119,23 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
         const plays = await client.play(1n); play = plays[0];
         if (!play) throw new Error('No play returned');
       }
+      actionPlayId = play.id;
       state = await read();
       const recorded = state.plays.find(item => item.id === play!.id);
       if (!recorded) throw new Error('Play not confirmed');
-      if (recorded.outcomeId === null) { setMessage('Settling your expedition…'); await client.settle(recorded.id); }
+      if (recorded.outcomeId === null) { setMessage('Settling your expedition…'); const settledResult = await client.settle(recorded.id); if (settledResult.outcomeId !== null) countSettlement(recorded.id); }
       state = await read();
       const settled = state.plays.find(item => item.id === recorded.id);
       if (!settled?.outcomeId || !objects[settled.outcomeId - 1] || state.inventory[settled.outcomeId - 1] < 1n) throw new Error('Outcome not confirmed');
-      setReveal(settled.outcomeId); setSelected(null); setMessage('Settled and owned. Decide it matters.');
+      countSettlement(settled.id); setReveal(settled.outcomeId); setSelected(null); setMessage('Settled and owned. Keep this find or redeem one copy.');
     } catch {
-      try { await read(); setMessage('Action cancelled or not completed. Collection checked; nothing will retry automatically.'); }
+      try { const state = await read();
+        if (actionPlayId !== null) {
+          const settled = state.plays.find(item => item.id === actionPlayId && item.outcomeId !== null);
+          if (settled?.outcomeId && state.inventory[settled.outcomeId - 1] > 0n) { countSettlement(settled.id); setReveal(settled.outcomeId); setSelected(null); setMessage('Settled object confirmed after recheck.'); return; }
+        }
+        setMessage('Action cancelled or not completed. Collection checked; nothing will retry automatically.');
+      }
       catch { setReadError(true); setMessage('We could not confirm your collection. Actions are locked until Retry succeeds.'); }
     } finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
@@ -165,8 +174,7 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
   }
   function begin() {
     local(() => {
-      if (tour !== 'curate' || occupied.length === 0) return;
-      if (!finale && !brief) { setMessage('Choose a feasible brief first.'); return; }
+      if (tour !== 'curate' || !finale || !ownershipReady || !arrangementReady) return;
       setTourSlots([...slots] as Slots); setTour('entrance'); setDestination(null); setOrder([]); setResult(null);
       setMessage('Choose an occupied plinth for your Friend.');
     });
@@ -181,11 +189,10 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
         setMessage('Presented plinth ' + destination + '. Choose another occupied plinth.');
         return;
       }
-      const mismatch = finale ? evaluateFinale(inventory, currentSlots, next) : evaluateBrief(brief!, currentSlots, next);
+      const mismatch = evaluateExhibition(target, currentSlots, next);
       setResult(mismatch);
-      if (mismatch) { setTour('complete'); setMessage('Brief missed. ' + mismatch + ' Retry costs nothing.'); }
-      else if (finale) { setTour('closed'); setMessage('Final Exhibition complete. The museum closes for this session.'); }
-      else { setTour('complete'); setCompletedTours(value => value + 1); setMessage('Brief met. Of considerable importance.'); }
+      if (mismatch) { setTour('complete'); setMessage('Exhibition missed. ' + mismatch + ' Retry costs nothing.'); }
+      else { setTour('closed'); setMessage('Final Exhibition complete.'); }
     });
   }
   function endTour() {
@@ -197,20 +204,19 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
   function returnToCuration() {
     local(() => {
       setTour('curate'); setTourSlots(null); setDestination(null); setOrder([]); setResult(null);
-      if (!finale && completedTours > 0) setBrief(null);
-      setMessage('Arrange again, choose a brief or fund another expedition.');
+      setMessage('Arrange again or fund another expedition.');
     });
   }
   function startFinale() {
-    local(() => { setFinale(true); setBrief(null); setResult(null); setMessage(finalTarget ? 'Arrange ' + finalTarget + ' owned ' + (finalTarget === 1 ? 'object' : 'objects') + ' for the Final Exhibition.' : 'Nothing remained on loan.'); });
+    local(() => { if (!ownershipReady) return; setFinale(true); setResult(null); setMessage('Arrange three owned objects to match ' + targetNames[target] + '.'); });
   }
   function leaveFinale() {
-    local(() => { setFinale(false); setBrief(null); setResult(null); setMessage('Choose a feasible brief or continue curating.'); });
+    local(() => { setFinale(false); setResult(null); setMessage('Continue collecting or curating.'); });
   }
   function closeRedeem() { setRedeemPreview(null); requestAnimationFrame(() => redeemButton.current?.focus()); }
   async function redeem() {
     const id = redeemPreview;
-    if (!id || locked.current || stopped || busy || readError || tour !== 'curate' || finale || !snapshot) return;
+    if (!id || locked.current || stopped || busy || readError || tour !== 'curate' || !snapshot) return;
     locked.current = true; setBusy(true);
     setMessage('Confirm one-copy redemption in the runtime.');
     try {
@@ -222,18 +228,16 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
       await client.redeem(id, 1n);
       const after = await read();
       if (after.inventory[id - 1] !== before.inventory[id - 1] - 1n) throw new Error('Redemption not confirmed');
-      if (brief && !feasible(after.inventory, brief)) {
-        setBrief(null);
-        setMessage('Redeeming made the selected brief impossible. Choose a feasible brief.');
-      } else {
-        setMessage('Redeemed one ' + objects[id - 1].name + ' for simulated RF.' + (affected ? ' Plinth ' + affected + ' was cleared.' : ' Display unchanged.'));
-      }
+      setActivity(current => recordActivity(current, 'redeem', client.definition.outcomes[id - 1].reward));
+      setReveal(null);
+      setMessage('Redeemed one ' + objects[id - 1].name + ' for simulated RF.' + (affected ? ' Plinth ' + affected + ' was cleared.' : ' Display unchanged.'));
     } catch {
       try {
         const after = await read();
-        if (brief && !feasible(after.inventory, brief)) { setBrief(null); setMessage('Inventory changed; selected brief is no longer feasible. Choose another.'); }
-        else if (after.inventory[id - 1] === snapshot.inventory[id - 1] - 1n) {
+        if (after.inventory[id - 1] === snapshot.inventory[id - 1] - 1n) {
           const affected = redeemAffectedPlinth(snapshot.inventory, slots, id);
+          setActivity(current => recordActivity(current, 'redeem', client.definition.outcomes[id - 1].reward));
+          setReveal(null);
           setMessage('Redemption confirmed after recheck.' + (affected ? ' Plinth ' + affected + ' was cleared.' : ' Display unchanged.'));
         } else setMessage('Redemption cancelled or uncertain. Collection rechecked; no automatic retry.');
       } catch { setReadError(true); setMessage('Redemption state could not be confirmed. Actions are locked until Retry succeeds.'); }
@@ -243,19 +247,27 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
 
   const atPlinth = destination !== null && tour !== 'curate';
   const rows = sprites ? spriteFrame(sprites, atPlinth ? 'up' : 'down', false, 0).frame.rows : [];
-  const tourResult = tour === 'complete' || tour === 'closed';
-  const briefTitle = finale ? 'Final Exhibition' : brief ? briefNames[brief] : 'Choose a brief';
-  const finalPair = occupied.length === 2 ? currentSlots[occupied[0] - 1] === currentSlots[occupied[1] - 1] ? briefNames.resemblance : briefNames.different : 'Two owned objects';
-  const finalDirection = finalTarget === 1 ? 'One owned object on the center plinth; Present it.' :
-    finalTarget === 2 ? finalPair + '; Present left before right.' :
-      finalTarget === 3 ? 'Three owned objects; Present the center plinth last.' : 'Nothing remained on loan.';
+  const progress = target === 'echo' ? [
+    { done: echoOwned.pair, text: 'Matching pair found' },
+    { done: echoOwned.different, text: 'One different object found' },
+    { done: echoArranged.ready, text: 'A / A / B arranged on three plinths' },
+    { done: tour === 'closed' && order[2] === echoDisplay(currentSlots).oddPlinth, text: 'Different object presented last' },
+  ] : [
+    { done: varietyOwned.ready, text: `Three different types collected (${varietyOwned.distinct}/3)` },
+    { done: varietyOwned.ready && varietyDisplay(slots), text: 'All three arranged on the plinths' },
+  ];
   return <main className="museum" data-paused={stopped} data-phase={tour}>
     <header><h1>Museum of Almost Nothing</h1><p className="disclosure">A session exhibition · Simulated RF · Resets on full reload</p>
       <div className="ledger" data-testid="ledger"><span>{snapshot ? amount(snapshot.rfBalance) : '…'} simulated RF</span><span>{snapshot?.consumables.toString() ?? '…'} permits</span><span>{snapshot?.inventory.reduce((a, b) => a + b, 0n).toString() ?? '…'} owned</span></div>
     </header>
+    <section className="target-panel" aria-label="Secret Exhibition target" data-target={target}>
+      <div className="target-heading"><span className="section-kicker">Secret Exhibition</span><strong>{targetNames[target]}</strong><span className="target-state">{tour === 'closed' ? 'COMPLETE' : ownershipReady ? 'TARGET READY' : 'COLLECTING'}</span></div>
+      <p className="target-flavor">{targetFlavors[target]}</p>
+      <ul className="target-checklist">{progress.map(item => <li key={item.text} data-done={item.done}><span aria-hidden="true">{item.done ? '✓' : '○'}</span>{item.text}</li>)}</ul>
+      <p className="target-activity">{countLabel(activity.expeditionsSettled, 'expedition')} · {countLabel(activity.permitsPurchased, 'permit')} purchased · {amount(activity.simulatedRfSpent)} simulated RF spent · {amount(activity.simulatedRfRedeemed)} simulated RF redeemed · {countLabel(activity.objectsRedeemed, 'object')} redeemed</p>
+    </section>
     <section className="room" aria-label="Museum room">
       <div className="inscription">An institution of very little consequence.</div>
-      <div className="brief"><h2>{briefTitle}</h2><p>{finale ? finalDirection : brief ? briefDirections[brief] : 'Choose a brief from the feasible collection below.'}</p></div>
       <div className="exhibits">
         {currentSlots.map((id, index) => <button key={index} type="button" className={'exhibit' + (selectedSlot === index && tour === 'curate' ? ' chosen' : '') + (order.includes(index + 1) ? ' presented' : '')}
           aria-label={tour === 'entrance' ? 'Direct Friend to plinth ' + (index + 1) : 'Select plinth ' + (index + 1)}
@@ -275,45 +287,31 @@ export default function Museum({ friendId, client, paused }: GameComponentProps)
         {rows.flatMap((row, y) => [...row].map((pixel, x) => pixel === '#' ? <rect key={x + '-' + y} x={x} y={y} width="1" height="1" /> : null))}
       </svg>}
     </section>
-    <section className="controls" aria-label="Museum actions">
+    {tour === 'curate' && reveal === null && <section className="collection-section" aria-label="Collection"><h2 className="section-kicker">Collection</h2>
+      <div className="collection" aria-label="Owned objects">{inventory.some(quantity => quantity > 0n) ? objects.map((object, index) => owned(index + 1) > 0n && <button key={object.name} aria-pressed={selected === index + 1} disabled={!canInteract}
+        onClick={() => local(() => { setSelected(index + 1); setMessage(object.name + ' selected. Choose a plinth, then Place.'); })}>
+        <span className="inventory-name">{object.name}</span><span className="inventory-count">Owned {owned(index + 1).toString()} · Displayed {displayed(slots, index + 1).toString()}</span>
+      </button>) : <p className="collection-empty">No objects collected yet.</p>}</div>
+    </section>}
+    <section className="controls" aria-label="Actions"><h2 className="section-kicker">Actions</h2>
       {artError ? <><p role="alert">Your curator couldn’t be loaded.</p><button disabled={stopped} onClick={() => setRetryArt(value => value + 1)}>Retry artwork</button></> : !sprites ? <p>Loading canonical Friend artwork…</p> : null}
       {readError && <button disabled={stopped || busy} onClick={() => void action('read')}>Retry collection</button>}
       <p className="instruction" aria-live="polite">{stopped ? 'Museum paused.' : message}</p>
-      {tourResult && <div className="result" role="status">
-        <strong>{tour === 'closed' && result ? 'Nothing remained on loan.' : result ? 'Brief missed.' : tour === 'closed' ? 'Final Exhibition complete.' : 'Brief met. Of considerable importance.'}</strong>
-        <p>{result ?? 'Presented plinths ' + order.join(' → ') + '.'}</p>
-        <b>{tour === 'closed' && result ? 'No successful exhibition · No RF awarded.' : 'Tour result only — no RF awarded.'}</b>
-        {tour === 'closed' && <small>Session exhibition · {snapshot ? amount(snapshot.rfBalance) : '…'} simulated RF · Resets on full reload</small>}
-      </div>}
-      {reveal ? <div className="reveal" aria-label="Settled object"><ObjectArt id={reveal} /><div><h2>{objects[reveal - 1].name}</h2><p>{objects[reveal - 1].description}</p><p>Owned {owned(reveal).toString()} · Fixed value {amount(client.definition.outcomes[reveal - 1].reward)} simulated RF</p></div><button disabled={!canInteract} onClick={keep}>Keep for exhibition</button><small>Already in your collection. Keep makes no SDK transaction.</small></div> : <>
-        {tour === 'curate' && !finale && <div className="actions economy">
-          {pending ? <button disabled={!canInteract} onClick={() => void action('resume')}>Resume expedition</button> : snapshot && snapshot.consumables > 0n ? <button disabled={!canInteract} onClick={() => void action('play')}>Send expedition</button> : <button disabled={!canInteract} onClick={() => void action('buy')}>Buy permit · {amount(client.definition.price)} RF</button>}
+      {reveal ? <div className="reveal" aria-label="Settled object"><ObjectArt id={reveal} /><div className="reveal-copy"><h2>{objects[reveal - 1].name}</h2><p>{objects[reveal - 1].description}</p><p>{targetNames[target]} · Owned {owned(reveal).toString()} · {amount(client.definition.outcomes[reveal - 1].reward)} simulated RF redemption</p></div><div className="reveal-actions"><button disabled={!canInteract} onClick={keep}>Keep for exhibition</button><button disabled={!canInteract} className="secondary" onClick={() => setRedeemPreview(reveal)}>Redeem one · {amount(client.definition.outcomes[reveal - 1].reward)} RF</button></div></div> : <>
+        {tour === 'curate' && <div className="actions">
+          {!finale && (!ownershipReady || pending || (snapshot?.consumables ?? 0n) > 0n) && (pending ? <button disabled={!canInteract} onClick={() => void action('resume')}>Resume expedition</button> : snapshot && snapshot.consumables > 0n ? <button disabled={!canInteract} onClick={() => void action('play')}>Send expedition</button> : <button disabled={!canInteract} onClick={() => void action('buy')}>Buy permit · {amount(client.definition.price)} RF</button>)}
           {selected && owned(selected) > 0n && <button ref={redeemButton} className="secondary" disabled={!canInteract} onClick={() => setRedeemPreview(selected)}>Redeem one · {amount(client.definition.outcomes[selected - 1].reward)} RF</button>}
-        </div>}
-        {tour === 'curate' && snapshot && inventory.some(quantity => quantity > 0n) && <div className="collection" aria-label="Owned objects">
-          {objects.map((object, index) => owned(index + 1) > 0n && <button key={object.name} aria-pressed={selected === index + 1} disabled={!canInteract}
-            onClick={() => local(() => { setSelected(index + 1); setMessage(object.name + ' selected. Choose a plinth, then Place.'); })}>
-            <span className="inventory-name">{object.name}</span><span className="inventory-count">Owned {owned(index + 1).toString()} · Displayed {displayed(slots, index + 1).toString()} · Available {available(inventory, slots, index + 1).toString()}</span>
-          </button>)}
-        </div>}
-        {tour === 'curate' && <div className="actions curation">
-          {selected && selectedSlot !== null && <button disabled={!canInteract || (slots[selectedSlot] !== selected && available(inventory, slots, selected) < 1n)} onClick={place}>{slots[selectedSlot] ? 'Replace plinth ' : 'Place on plinth '}{selectedSlot + 1}</button>}
+          {selected && selectedSlot !== null && slots[selectedSlot] !== selected && <button disabled={!canInteract || available(inventory, slots, selected) < 1n} onClick={place}>{slots[selectedSlot] ? 'Replace plinth ' : 'Place on plinth '}{selectedSlot + 1}</button>}
           {selectedSlot !== null && slots[selectedSlot] !== null && <button className="secondary" disabled={!canInteract} onClick={remove}>Remove plinth {selectedSlot + 1}</button>}
-          {finale ? <button className="secondary" disabled={!canInteract} onClick={leaveFinale}>Return to briefs</button> : completedTours > 0 && <button className="secondary" disabled={!canInteract} onClick={startFinale}>Final Exhibition</button>}
-        </div>}
-        {tour === 'curate' && !finale && offered.length > 0 && <div className="brief-options" aria-label="Feasible briefs">
-          {offered.map(id => <button key={id} className="secondary" aria-pressed={brief === id} disabled={!canInteract}
-            onClick={() => local(() => { setBrief(id); setMessage(briefDirections[id]); })}>{briefNames[id]}</button>)}
-        </div>}
-        {tour === 'curate' && <div className="actions"><button disabled={!canInteract || occupied.length === 0 || (!finale && !brief) || (finale && finalTarget === 0)} onClick={begin}>{finale ? 'Begin Final Exhibition' : 'Begin tour'}</button>
-          {finale && finalTarget === 0 && <button disabled={!canInteract} onClick={() => local(() => { setTour('closed'); setResult('Nothing remained on loan.'); setMessage('Nothing remained on loan.'); })}>Close empty exhibition</button>}
+          {ownershipReady && !finale && <button disabled={!canInteract} onClick={startFinale}>Prepare Final Exhibition</button>}
+          {finale && <><button disabled={!canInteract || !arrangementReady} onClick={begin}>Begin Final Exhibition</button><button className="secondary" disabled={!canInteract} onClick={leaveFinale}>Back to collecting</button></>}
         </div>}
         {tour === 'at-plinth' && <div className="actions"><button disabled={!canInteract} onClick={present}>Present plinth {destination}</button><button className="secondary" disabled={!canInteract} onClick={endTour}>End rehearsal</button></div>}
-        {tour === 'entrance' && <div className="actions"><span className="destination-prompt">Choose an occupied, unpresented plinth above.</span><button className="secondary" disabled={!canInteract} onClick={endTour}>End rehearsal</button></div>}
-        {tour === 'complete' && <div className="actions">{result && <button disabled={!canInteract} onClick={retry}>Retry tour</button>}<button disabled={!canInteract} onClick={returnToCuration}>Return to curation</button></div>}
-        {tour === 'closed' && <div className="actions"><button disabled={!canInteract} onClick={returnToCuration}>Return to curation</button></div>}
+        {tour === 'entrance' && <div className="actions"><span className="destination-prompt">Choose an unpresented plinth above.</span><button className="secondary" disabled={!canInteract} onClick={endTour}>End rehearsal</button></div>}
+        {tour === 'complete' && <><div className="result" role="status"><strong>Exhibition missed.</strong><p>{result}</p><b>Tour result only — no RF awarded.</b></div><div className="actions"><button disabled={!canInteract} onClick={retry}>Retry tour</button><button disabled={!canInteract} onClick={returnToCuration}>Return to curation</button></div></>}
+        {tour === 'closed' && <div className="closing-tableau" role="status"><span className="section-kicker">Museum of Almost Nothing</span><h2>Final Exhibition</h2><p>Friend #{friendId.toString()} · Secret Exhibition: {targetNames[target]}</p><p>Displayed objects: {currentSlots.map(id => id ? objects[id - 1].name : 'Empty').join(' · ')}</p><h3>Token Activity — simulated</h3><div className="final-stats"><span>Expeditions: {activity.expeditionsSettled}</span><span>Permits purchased: {activity.permitsPurchased}</span><span>Objects redeemed: {activity.objectsRedeemed}</span><span>RF spent: {amount(activity.simulatedRfSpent)}</span><span>RF redeemed: {amount(activity.simulatedRfRedeemed)}</span><strong>Net simulated RF spent: {amount(netSpent)}</strong></div><small>FriendSDK simulated economy — no live RF was burned or spent.</small><button className="secondary" disabled={!canInteract} onClick={returnToCuration}>Return to curation</button></div>}
       </>}
-      <button ref={termsButton} className="terms-toggle" disabled={stopped || busy || redeemPreview !== null} aria-haspopup="dialog" aria-expanded={terms} onClick={() => setTerms(true)}>Expedition terms</button>
+      {tour === 'curate' && reveal === null && <button ref={termsButton} className="terms-toggle" disabled={stopped || busy || redeemPreview !== null} aria-haspopup="dialog" aria-expanded={terms} onClick={() => setTerms(true)}>Expedition terms</button>}
     </section>
     {redeemPreview !== null && <div className="terms-backdrop"><div className="terms" role="dialog" aria-modal="true" aria-labelledby="redeem-title"
       onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); if (!busy) closeRedeem(); } if (event.key === 'Tab') { const buttons = [...event.currentTarget.querySelectorAll('button')]; if (buttons.length) { event.preventDefault(); (document.activeElement === buttons[0] ? buttons[1] : buttons[0]).focus(); } } }}>

@@ -2,13 +2,13 @@
 
 A first playable, session-only museum starring your selected canonical Rare Friend.
 
-**Phase 3B: G2 minimum complete; owner G2 playtest required.**
+**Phase 3B.1: Token Activity pass; owner playtest required before G3.**
 
 ## Public preview
 
-[Play the G2 preview](https://la0311.github.io/rarefriends-museum-of-almost-nothing/)
+[Play the public preview](https://la0311.github.io/rarefriends-museum-of-almost-nothing/)
 
-The G1 preview passed owner real-wallet playtests on desktop and mobile. The updated G2 preview needs an owner playtest; an eligible Friend wallet is required.
+The owner reported real eligible-wallet gameplay passing on desktop and mobile. Phase 3B.1 gameplay needs an owner Token Activity playtest; an eligible Friend wallet is required.
 
 ## Run
 
@@ -25,13 +25,13 @@ This machine uses a local npm download because npm was absent from PATH: `node .
 
 ## Playable session
 
-Buy permit → Send expedition → settle → reveal an owned object → Keep or redeem → arrange up to three plinths → choose a feasible brief → direct your Friend to each occupied plinth → explicitly Present → start a Final Exhibition when ready.
+One random Secret Exhibition target (THE ECHO or THE VARIETY) appears per runtime session. Buy permit → Send expedition → settle → reveal an owned object → Keep or redeem → collect for the target → arrange all three plinths → direct your Friend and explicitly Present → complete the Final Exhibition.
 
-Tab and Enter/Space or pointer/touch operate the same visible controls. Select an owned type, select a numbered plinth, then Place or Replace; Remove returns a copy to undisplayed stock. The tray shows Owned, Displayed and Available quantities. Opening Remarks uses one object; A Remarkable Resemblance uses two identical copies; Two Entirely Different Things uses two different types. Pair briefs require the left occupied plinth to be presented before the right. The Friend changes position only when directed; arrival never presents automatically. Failed tours and retries cost nothing.
+Tab and Enter/Space or pointer/touch operate the same visible controls. Select an owned type from Collection, select a numbered plinth, then Place or Replace; Remove returns a copy to undisplayed stock. THE ECHO needs a matching pair and one different object, with the different object Presented last. THE VARIETY needs three different objects in any Present order. The Friend changes position only when directed; arrival never presents automatically. Failed tours and retries cost nothing.
 
-Redeem acts on one aggregate copy through runtime confirmation. Undisplayed stock is used first; if every copy is displayed, the highest-numbered matching plinth clears after the SDK state is re-read. Final Exhibition adapts to one, two or three owned copies and closes with the displayed collection, presentation order and current simulated RF. Runtime menus pause local gameplay. There is no audio. The desktop frame is 960 × 640; the narrow host frame grows vertically so required current-state actions remain visible without game scrolling.
+Redeem acts on one aggregate copy through runtime confirmation. Undisplayed stock is used first; if every copy is displayed, the highest-numbered matching plinth clears after the SDK state is re-read. Confirmed permit purchases, settlements and redemptions feed local Token Activity counters. The closing tableau shows the target, collection and simulated RF net spend with an explicit no-live-spend disclosure. Runtime menus pause local gameplay. There is no audio. The desktop frame is 960 × 640; the narrow host frame grows vertically so required current-state actions remain visible without game scrolling.
 
-RF is simulated. Keep, placement and tours make no economic mutations. The SDK owns aggregate inventory. Full runtime reload resets the session; child reload re-reads retained ledger state but does not restore local arrangements.
+RF is simulated. Keep, placement and tours make no economic mutations. The SDK owns aggregate inventory. Full runtime reload resets the session and may select a new target; child reload re-reads retained ledger state but does not restore the local target, arrangement, tour or activity counters.
 
 Final G2 economics: 6 RF per permit; Pebble 40% / fixed 2 RF, Twig 35% / fixed 2 RF, Paperclip 15% / fixed 3 RF, Button 10% / fixed 4 RF. The initial 20 RF funds three permits (18 RF), leaving 2 RF. Two ordinary 2 RF redemptions can fund another permit; weighted expected redemption is 2.35 RF, below the 6 RF permit. Tour results never change RF, odds or values.
 
@@ -51,4 +51,4 @@ FriendSDK **0.1.4**, upstream commit **ca3bf183b809ecf22d87c63d88ce03969a3f8da2*
 
 Canonical Friend artwork: Rare Friends via the SDK sprite API; see the installed SDK NOTICE.md. Object silhouettes and museum interface are project-authored CSS.
 
-Start the canonical context at [CONTEXT_INDEX](docs/vibeathon/CONTEXT_INDEX.md). [STATUS](docs/vibeathon/STATUS.md) records progress; [ROADMAP](docs/vibeathon/ROADMAP.md) controls scope. GitHub Pages hosts the G2 playtest preview; G3 shipping and submission are not complete.
+Start the canonical context at [CONTEXT_INDEX](docs/vibeathon/CONTEXT_INDEX.md). [STATUS](docs/vibeathon/STATUS.md) records progress; [ROADMAP](docs/vibeathon/ROADMAP.md) controls scope. GitHub Pages hosts the Phase 3B.1 playtest preview; G3 shipping and submission are not complete.

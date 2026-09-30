@@ -1,6 +1,10 @@
 export type Slots = [number | null, number | null, number | null];
-export type Brief = 'opening' | 'resemblance' | 'different';
+export type SecretTarget = 'echo' | 'variety';
 export const emptySlots = (): Slots => [null, null, null];
+
+export function pickSecretTarget(random: () => number = Math.random): SecretTarget {
+  return random() < 0.5 ? 'echo' : 'variety';
+}
 
 export function displayed(slots: Slots, outcomeId: number): bigint {
   return BigInt(slots.filter(id => id === outcomeId).length);
@@ -40,48 +44,56 @@ export function redeemAffectedPlinth(inventory: readonly bigint[], slots: Slots,
   return index < 0 ? null : index + 1;
 }
 
-export function feasible(inventory: readonly bigint[], brief: Brief): boolean {
-  if (brief === 'opening') return inventory.some(quantity => quantity > 0n);
-  if (brief === 'resemblance') return inventory.some(quantity => quantity >= 2n);
-  return inventory.filter(quantity => quantity > 0n).length >= 2;
+export function echoOwnership(inventory: readonly bigint[]): { pair: boolean; different: boolean; ready: boolean } {
+  const pair = inventory.some(quantity => quantity >= 2n);
+  const different = inventory.some((quantity, index) => quantity >= 2n && inventory.some((other, otherIndex) => otherIndex !== index && other > 0n));
+  return { pair, different, ready: different };
 }
 
-export function offeredBriefs(inventory: readonly bigint[], completedTours: number): Brief[] {
-  if (!feasible(inventory, 'opening')) return [];
-  if (completedTours === 0) return ['opening'];
-  const pairs: Brief[] = ['resemblance', 'different'];
-  const offered = pairs.filter(brief => feasible(inventory, brief));
-  return offered.length ? offered : ['opening'];
+export function varietyOwnership(inventory: readonly bigint[]): { distinct: number; ready: boolean } {
+  const distinct = inventory.filter(quantity => quantity > 0n).length;
+  return { distinct, ready: distinct >= 3 };
 }
 
-export function evaluateBrief(brief: Brief, slots: Slots, order: readonly number[]): string | null {
-  const occupied = slots.map((id, index) => id === null ? -1 : index + 1).filter(index => index > 0);
-  const uniqueOrder = order.length === occupied.length && new Set(order).size === order.length && order.every(index => occupied.includes(index));
-  if (!uniqueOrder) return 'Present every occupied plinth exactly once.';
-  if (brief === 'opening') return occupied.length === 1 ? null : 'Opening Remarks needs exactly one displayed object.';
-  if (occupied.length !== 2) return 'This brief needs exactly two displayed objects.';
-  const [left, right] = occupied;
-  const same = slots[left - 1] === slots[right - 1];
-  if (brief === 'resemblance' && !same) return 'Display two copies of the same object.';
-  if (brief === 'different' && same) return 'Display two different object types.';
-  return order[0] === left && order[1] === right ? null : 'Present the left occupied plinth before the right.';
-}
-
-export function finaleTarget(inventory: readonly bigint[]): number {
-  return Math.min(3, Number(inventory.reduce((sum, quantity) => sum + quantity, 0n)));
-}
-
-export function evaluateFinale(inventory: readonly bigint[], slots: Slots, order: readonly number[]): string | null {
-  const target = finaleTarget(inventory);
-  if (target === 0) return 'Nothing remained on loan.';
-  const occupied = slots.map((id, index) => id === null ? -1 : index + 1).filter(index => index > 0);
-  if (occupied.length !== target) return `Display exactly ${target} owned ${target === 1 ? 'object' : 'objects'} for the Final Exhibition.`;
-  if (target === 1 && occupied[0] !== 2) return 'Place the single object on the center plinth.';
-  if (order.length !== target || new Set(order).size !== target || !order.every(index => occupied.includes(index))) return 'Present every displayed plinth exactly once.';
-  if (target === 2) {
-    const relationship: Brief = slots[occupied[0] - 1] === slots[occupied[1] - 1] ? 'resemblance' : 'different';
-    return evaluateBrief(relationship, slots, order);
+export function echoDisplay(slots: Slots): { ready: boolean; oddPlinth: number | null } {
+  if (slots.some(id => id === null)) return { ready: false, oddPlinth: null };
+  for (let index = 0; index < 3; index++) {
+    if (slots[index] !== slots[(index + 1) % 3] && slots[(index + 1) % 3] === slots[(index + 2) % 3]) {
+      return { ready: true, oddPlinth: index + 1 };
+    }
   }
-  if (target === 3 && order.at(-1) !== 2) return 'Save the center plinth for the final presentation.';
+  return { ready: false, oddPlinth: null };
+}
+
+export function varietyDisplay(slots: Slots): boolean {
+  return slots.every(id => id !== null) && new Set(slots).size === 3;
+}
+
+export function targetReady(target: SecretTarget, inventory: readonly bigint[]): boolean {
+  return target === 'echo' ? echoOwnership(inventory).ready : varietyOwnership(inventory).ready;
+}
+
+export function displayReady(target: SecretTarget, slots: Slots): boolean {
+  return target === 'echo' ? echoDisplay(slots).ready : varietyDisplay(slots);
+}
+
+export function evaluateExhibition(target: SecretTarget, slots: Slots, order: readonly number[]): string | null {
+  if (!displayReady(target, slots)) return target === 'echo' ? 'Display a matching pair and one different object.' : 'Display three different objects.';
+  if (order.length !== 3 || new Set(order).size !== 3 || !order.every(index => index >= 1 && index <= 3)) return 'Present every displayed plinth exactly once.';
+  if (target === 'echo' && order[2] !== echoDisplay(slots).oddPlinth) return 'Present the different object last.';
   return null;
+}
+
+export type SessionActivity = {
+  permitsPurchased: number;
+  expeditionsSettled: number;
+  simulatedRfSpent: bigint;
+  simulatedRfRedeemed: bigint;
+  objectsRedeemed: number;
+};
+export const emptyActivity = (): SessionActivity => ({ permitsPurchased: 0, expeditionsSettled: 0, simulatedRfSpent: 0n, simulatedRfRedeemed: 0n, objectsRedeemed: 0 });
+export function recordActivity(activity: SessionActivity, action: 'buy' | 'settle' | 'redeem', rf: bigint = 0n): SessionActivity {
+  if (action === 'buy') return { ...activity, permitsPurchased: activity.permitsPurchased + 1, simulatedRfSpent: activity.simulatedRfSpent + rf };
+  if (action === 'settle') return { ...activity, expeditionsSettled: activity.expeditionsSettled + 1 };
+  return { ...activity, objectsRedeemed: activity.objectsRedeemed + 1, simulatedRfRedeemed: activity.simulatedRfRedeemed + rf };
 }
