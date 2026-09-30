@@ -3,21 +3,21 @@
 Updated: 2026-09-30
 
 PROJECT: Museum of Almost Nothing
-CURRENT PHASE: Phase 3B.1 — Token Activity Pass
-STATE: Token Activity pass validated and public; owner Token Activity playtest required
+CURRENT PHASE: G3 — Final Ship
+STATE: Final validation and public preview PASS; submission in progress
 ROADMAP: AUTHORED
 IMPLEMENTATION: PHASE 3B.1 COMPLETE
 DEADLINE MODE: ACTIVE
-CURRENT GATE: G2 — Minimum Viable Vibeathon Game
+CURRENT GATE: G3 — Final Ship
 G0: PASS
 G1: PASS — REAL WALLET VERIFIED DESKTOP + MOBILE
 G2: PASS
-TOKEN ACTIVITY PASS: PASS — OWNER PLAYTEST REQUIRED
-G3: NOT STARTED
+TOKEN ACTIVITY PASS: PASS — owner UI/UX verified
+G3: IN PROGRESS — final checks and real-wallet smoke PASS; organizer PR pending
 FIRST PLAYABLE: AVAILABLE
 MOBILE: PASS — owner real-wallet playtest
-NEXT: Owner Token Activity playtest → G3 Ship
-NEXT ACTION: Owner checks target clarity, repeat-expedition motivation, Keep/Redeem influence, Collection/Actions separation, finale payoff and simulated summary
+NEXT: Publish final source and open organizer submission PR
+NEXT ACTION: Finish G3 submission and record PR URL
 
 SELECTED CONCEPT: Museum of Almost Nothing
 SDK: v0.1.4
@@ -26,12 +26,15 @@ REAL_WALLET_TEST_CAPABILITY: AVAILABLE
 REAL-WALLET GAMEPLAY VERIFIED: PASS — owner-reported desktop and mobile
 REAL_WALLET_DESKTOP: PASS — owner-reported
 REAL_WALLET_MOBILE: PASS — owner-reported
+FINAL REAL-WALLET SMOKE: PASS — owner verified on public Token Activity build; no wallet address recorded
 PUBLIC PREVIEW: AVAILABLE — https://la0311.github.io/rarefriends-museum-of-almost-nothing/
 PUBLIC PREVIEW REVISION: gh-pages a8e742c70b36beb5cf9c28ff36844ed2ace878a8
+SOURCE: https://github.com/la0311/rarefriends-museum-of-almost-nothing
+SUBMISSION: organizer PR pending
 
 ## Execution
 
-Latest owner instruction authorizes Phase 3B.1 and reports the G2 game technically correct and eligible real-wallet play passing on desktop and mobile. G0, G1, G2 and the Phase 3B.1 technical pass are complete. The new Token Activity flow still needs the owner's real-wallet playtest before G3.
+Latest owner instruction authorizes G3 feature-frozen shipping and reports Phase 3B.1 UI/UX passing. G0, G1, G2 and the Token Activity pass are complete. The owner verified the final public eligible-wallet, Friend, Secret Exhibition and simulated permit/expedition smoke.
 
 Existing clean baseline commit: fb1a6a7ddce82edff11d0e1421d9f9db0ba49835. Verified G1/G1.1 changes and owner validation were checkpointed locally as 54fd0fa. D-030 authorized G1 preview publishing; the Phase 3B instruction authorized the G2 preview.
 
@@ -49,7 +52,7 @@ Official v0.1.4 release tag resolves to the pinned commit. Downloaded archive SH
 
 ## Owner checkpoint
 
-Evaluate only: whether the active target is immediately obvious; why another expedition may help; whether the target influences Keep versus Redeem; whether collecting feels like a set hunt; whether Collection and Actions are distinct; whether the Final Exhibition pays off; and whether the simulated Token Activity summary is clear and honest. Stop before G3 until this owner playtest is reported.
+Phase 3B.1 UI/UX and final public real-wallet smoke are owner-verified PASS. No further product iteration is authorized in G3.
 
 ## Current limitations / validation debt
 
@@ -96,4 +99,12 @@ Owner playtest found the original desktop terms overflowing and the original 360
 - `node tests/museum.mjs`: PASS for both deterministic targets at 960px keyboard and 360px touch. Coverage includes cancelled buy/redeem, duplicate-action lock, confirmed activity counts, target readiness and loss after redemption, Echo failure/free retry, Variety any-order success, player-directed Friend, pause, no tour economy mutation and per-state frame fit without child scroll.
 - Visual evidence: [Echo mobile collection](evidence/token-activity-echo-collection-360.png), [Variety mobile collection](evidence/token-activity-variety-collection-360.png), [Echo mobile finale](evidence/token-activity-echo-finale-360.png), [Variety desktop finale](evidence/token-activity-variety-finale-960.png).
 - Static build published to the existing gh-pages root as `a8e742c70b36beb5cf9c28ff36844ed2ace878a8`. `node tests/public-preview.mjs`: PASS; public `index.html`, `game.js`, `game.css`, `runtime.js` and `runtime.css` SHA-256 hashes match the validated build, all HTTP 200. Public Chromium at 960×640 and 360×480 shows the normal wallet gate, with no browser errors. Headless public checking cannot use an eligible wallet; owner real-wallet evaluation of the new target flow remains the next checkpoint. URL: https://la0311.github.io/rarefriends-museum-of-almost-nothing/.
-- G3 has not started. The older Phase 3B brief/finale notes above document the previous preview; D-034 and PRODUCT_SPEC.md's Phase 3B.1 section are current.
+- The older Phase 3B brief/finale notes above document the previous preview; D-034 and PRODUCT_SPEC.md's Phase 3B.1 section are current.
+
+## G3 final ship validation
+
+- `npm run typecheck`, `npm run check`, `npm run build`, `node tests/museum-rules.mjs` and `npm run test:game`: PASS. Browser cases covered both targets at 960px keyboard and 360px touch, Keep/Redeem, activity counters, final tour, no tour RF mutation, duplicate request protection, pause and frame fit.
+- Final public static `index.html`, `game.js`, `game.css`, `runtime.js` and `runtime.css` SHA-256 match the fresh production build. `node tests/public-preview.mjs`: PASS; desktop 960×640 and mobile 360×480 HTTP 200, normal SDK wallet gate, no page or console errors. Since the rebuilt assets are byte-identical, the existing gh-pages revision `a8e742c70b36beb5cf9c28ff36844ed2ace878a8` remains the deployed final candidate.
+- Final public real-wallet smoke: PASS — owner verified eligible wallet/Friend access, Secret Exhibition, one simulated permit/expedition interaction, and usable new UI. No wallet address or secret recorded.
+- RNG limitation confirmed from the finite 20 simulated RF start, 6 RF permits, and fixed redemption values: an unlucky sequence can leave a target unattainable. The final README and submission disclose this; no mechanic was changed.
+- High-confidence credential pattern, tracked sensitive filename, and wallet-address pattern scans found no matches. Generated build and local tooling remain ignored. Submission copy explicitly discloses that no live RF is burned or spent.
