@@ -274,7 +274,7 @@ Object silhouettes must remain legible without relying on color. Descriptions ap
 
 The settled-find reveal is a temporary central panel with the object, one description and two large decisions. The room remains visible behind it. No full-screen card collection replaces the museum.
 
-On narrow touch displays, preserve the 3:2 scene while exposing inventory and decisions through a readable contained panel. Simplify visible copy and enlarge active targets rather than shrinking every desktop control proportionally. Touch readability remains an acceptance requirement, given the SDK’s small default frame and overlays. [Runtime frame constraints](https://github.com/spokesz/friendsdk/blob/ca3bf183b809ecf22d87c63d88ce03969a3f8da2/HOST_INTEGRATION.md#L274)
+On narrow touch displays, preserve the approximately 3:2 museum scene while exposing inventory and decisions through a readable contained panel. Phase 3A.1 owner playtest found that the SDK's default 360 × 240 host frame clipped required actions; D-031 permits a taller 3:4 host frame at widths up to 500px while retaining the 960 × 640 desktop presentation. All required G1 controls must fit above the trusted runtime control band without child scrolling. Simplify visible copy and enlarge active targets rather than shrinking every desktop control proportionally. Touch readability remains an acceptance requirement. [Runtime frame constraints](https://github.com/spokesz/friendsdk/blob/ca3bf183b809ecf22d87c63d88ce03969a3f8da2/HOST_INTEGRATION.md#L274)
 
 ### Representative screenshot/GIF
 

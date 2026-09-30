@@ -25,10 +25,11 @@ export default function Museum({friendId, client, paused}: GameComponentProps) {
  const [hidden,setHidden]=useState(document.hidden);
  const [terms,setTerms]=useState(false);
  const locked=useRef(false);
+ const termsButton=useRef<HTMLButtonElement>(null);
 
  const mounted=useRef(true);
  const stopped=paused||hidden;
- const canInteract=!stopped&&!busy&&!readError&&!!snapshot&&!!sprites;
+ const canInteract=!stopped&&!busy&&!readError&&!terms&&!!snapshot&&!!sprites;
  const owned=(id:number,state=snapshot)=>state?.inventory[id-1]??0n;
  const pending=snapshot?.plays.find(play=>play.outcomeId===null);
  const apply=(state:GameSnapshot)=>{
@@ -92,6 +93,7 @@ export default function Museum({friendId, client, paused}: GameComponentProps) {
  function begin(){local(()=>{if(plinth&&owned(plinth)>0n){setTour('entrance');setMessage('Choose a destination for your curator.');}});}
  function visit(){local(()=>{if(tour==='entrance'){setTour('plinth');setMessage('Your curator is in position. Select Present.');}});}
  function present(){local(()=>{if(tour==='plinth'&&plinth&&owned(plinth)>0n){setTour('complete');setMessage('Brief met. Of considerable importance.');}});}
+ function closeTerms(){setTerms(false);requestAnimationFrame(()=>termsButton.current?.focus());}
  const atPlinth=tour==='plinth'||tour==='complete';
  const rows=sprites?spriteFrame(sprites,atPlinth?'up':'down',false,0).frame.rows:[];
  const activeTour=tour==='entrance'||tour==='plinth';
@@ -104,17 +106,17 @@ export default function Museum({friendId, client, paused}: GameComponentProps) {
     <div className="brief"><h2>Opening Remarks</h2><p>Display exactly one owned object. Direct your Friend, then Present.</p></div>
     <div className="exhibit">{plinth&&<ObjectArt id={plinth}/>}<div className="plinth"><span>1</span></div><p>{plinth?objects[plinth-1].name:'An empty plinth. For now.'}</p></div>
     {sprites&&<svg role="img" aria-label="Your selected Rare Friend" viewBox="0 0 16 16" className={`friend ${atPlinth?'at-plinth':''}`} data-position={atPlinth?'plinth':'entrance'}>{rows.flatMap((row,y)=>[...row].map((pixel,x)=>pixel==='#'?<rect key={`${x}-${y}`} x={x} y={y} width="1" height="1"/>:null))}</svg>}
-    {tour==='complete'&&<div className="result" role="status"><strong>Brief met. Of considerable importance.</strong><p>{plinth&&objects[plinth-1].description}</p><b>Tour result only — no RF awarded.</b></div>}
    </section>
    <section className="controls" aria-label="Museum actions">
     {artError?<><p role="alert">Your curator couldn’t be loaded.</p><button disabled={stopped} onClick={()=>setRetryArt(v=>v+1)}>Retry artwork</button></>:!sprites?<p>Loading canonical Friend artwork…</p>:null}
     {readError&&<button disabled={stopped||busy} onClick={()=>void action('read')}>Retry collection</button>}
     <p className="instruction" aria-live="polite">{stopped?'Museum paused.':message}</p>
+    {tour==='complete'&&<div className="result" role="status"><strong>Brief met. Of considerable importance.</strong><p>{plinth&&objects[plinth-1].description}</p><b>Tour result only — no RF awarded.</b></div>}
     {reveal?<div className="reveal" aria-label="Settled object"><ObjectArt id={reveal}/><div><h2>{objects[reveal-1].name}</h2><p>{objects[reveal-1].description}</p><p>Owned {owned(reveal).toString()} · Fixed value {amount(client.definition.outcomes[reveal-1].reward)} simulated RF</p></div><button disabled={!canInteract} onClick={keep}>Keep for exhibition</button><small>Already in your collection. Keep makes no SDK transaction.</small></div>:<>
      <div className="actions">
       {!activeTour&&tour!=='complete'&&<>
-       {pending?<button disabled={!canInteract} onClick={()=>void action('resume')}>Resume expedition</button>:snapshot&&snapshot.consumables>0n?<button disabled={!canInteract} onClick={()=>void action('play')}>Send expedition</button>:<button disabled={!canInteract} onClick={()=>void action('buy')}>Buy permit · {amount(client.definition.price)} RF</button>}
-       {selected&&<button disabled={!canInteract||owned(selected)<1n} onClick={place}>Place on plinth 1</button>}
+       {pending?<button className={selected||plinth?'secondary':undefined} disabled={!canInteract} onClick={()=>void action('resume')}>Resume expedition</button>:snapshot&&snapshot.consumables>0n?<button className={selected||plinth?'secondary':undefined} disabled={!canInteract} onClick={()=>void action('play')}>Send expedition</button>:<button className={selected||plinth?'secondary':undefined} disabled={!canInteract} onClick={()=>void action('buy')}>Buy permit · {amount(client.definition.price)} RF</button>}
+       {selected&&selected!==plinth&&<button disabled={!canInteract||owned(selected)<1n} onClick={place}>Place on plinth 1</button>}
        {plinth&&<button disabled={!canInteract} onClick={begin}>Begin tour</button>}
       </>}
       {tour==='entrance'&&<button disabled={!canInteract} onClick={visit}>Direct Friend to plinth 1</button>}
@@ -124,8 +126,14 @@ export default function Museum({friendId, client, paused}: GameComponentProps) {
      </div>
      {!activeTour&&tour==='curate'&&snapshot&&snapshot.inventory.some(q=>q>0n)&&<div className="collection" aria-label="Owned objects">{objects.map((object,index)=>owned(index+1)>0n&&<button key={object.name} aria-pressed={selected===index+1} disabled={!canInteract} onClick={()=>local(()=>{setSelected(index+1);setMessage('Object selected. Place it on plinth 1.');})}>{object.name} · {owned(index+1).toString()} owned</button>)}</div>}
     </>}
-    <button className="terms-toggle" disabled={stopped} aria-expanded={terms} onClick={()=>setTerms(!terms)}>Expedition terms</button>
-    {terms&&<div className="terms"><p>One permit: {amount(client.definition.price)} simulated RF. Provisional G1 terms; tours never change these values.</p>{client.definition.outcomes.map(o=><p key={o.name}>{o.name}: {o.chanceBps/100}% · fixed redemption {amount(o.reward)} RF</p>)}<p>Redemption is not part of this first playable. No real RF transactions. Tab, Enter / Space, or tap the same controls. Movement is immediate; Present is always explicit.</p></div>}
+    <button ref={termsButton} className="terms-toggle" disabled={stopped||busy} aria-haspopup="dialog" aria-expanded={terms} onClick={()=>setTerms(true)}>Expedition terms</button>
    </section>
+   {terms&&<div className="terms-backdrop"><div className="terms" role="dialog" aria-modal="true" aria-labelledby="terms-title" onKeyDown={event=>{if(event.key==='Escape'){event.preventDefault();closeTerms();}if(event.key==='Tab'){event.preventDefault();(event.currentTarget.querySelector('button') as HTMLButtonElement)?.focus();}}}>
+     <h2 id="terms-title">Expedition terms</h2>
+     <p>One permit costs <strong>{amount(client.definition.price)} simulated RF</strong>.</p>
+     <div className="terms-list">{client.definition.outcomes.map(o=><p key={o.name}><span>{o.name}</span><span>{o.chanceBps/100}% · {amount(o.reward)} RF fixed value</span></p>)}</div>
+     <p>Tour performance never changes these probabilities or values. No real RF transactions.</p>
+     <button autoFocus onClick={closeTerms}>Close terms</button>
+   </div></div>}
  </main>;
 }

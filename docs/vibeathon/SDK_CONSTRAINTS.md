@@ -13,7 +13,7 @@ Runtime supplies wallet connection, NFT discovery, eligibility gate, Friend sele
 
 Playable identity requires fresh verified ownership of an eligible hardwired Generations NFT, generation >=1, Robinhood chain 4663. Account/network/Friend changes invalidate the session. Mocks are automated test fixtures only, never a shipped bypass.
 
-REAL_WALLET_TEST_CAPABILITY: AVAILABLE — owner-confirmed in Phase 1D. Real-wallet gameplay is NOT verified. Later QA uses normal browser wallet/runtime flow; do not connect in Phase 1D or record wallet addresses/secrets.
+REAL_WALLET_TEST_CAPABILITY: AVAILABLE — owner-confirmed in Phase 1D. G1 real-wallet gameplay, eligible ownership flow and canonical art passed owner testing on desktop and mobile in the public preview. Do not record wallet addresses/secrets.
 Sources: [runtime ownership](https://github.com/spokesz/friendsdk/blob/ca3bf183b809ecf22d87c63d88ce03969a3f8da2/AGENTS.md#L35), [eligibility](https://github.com/spokesz/friendsdk/blob/ca3bf183b809ecf22d87c63d88ce03969a3f8da2/AGENTS.md#L70), [entry/read](https://github.com/spokesz/friendsdk/blob/ca3bf183b809ecf22d87c63d88ce03969a3f8da2/HOST_INTEGRATION.md#L197), [session invalidation](https://github.com/spokesz/friendsdk/blob/ca3bf183b809ecf22d87c63d88ce03969a3f8da2/HOST_INTEGRATION.md#L225).
 
 ## Economy
@@ -54,4 +54,3 @@ Sources: [simulation](https://github.com/spokesz/friendsdk/blob/ca3bf183b809ecf2
 ## Validation evidence
 
 [Baseline](research/PHASE_0_BASELINE.md) and [historical run log](research/PHASE_0_RUN_LOG.txt) preserve measured results and limitations. Existing commands describe SDK checks, not an already-installed project toolchain. Future game checks require Phase 2 integration decisions. Real-wallet capability does not establish passing gameplay or submission readiness.
-

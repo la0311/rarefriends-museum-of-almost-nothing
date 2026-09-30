@@ -2,7 +2,13 @@
 
 A first playable, session-only museum starring your selected canonical Rare Friend.
 
-**Phase 3A: G0 passed; G1 automated validation passed. Owner playtest required before G2.**
+**Phase 3B: G1 owner-validated; bounded G2 implementation authorized.**
+
+## Public preview
+
+[Play the G1 preview](https://la0311.github.io/rarefriends-museum-of-almost-nothing/)
+
+G1 preview passed owner real-wallet playtests on desktop and mobile; eligible Friend wallet required.
 
 ## Run
 
@@ -13,7 +19,7 @@ npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:4173 in a browser with the eligible wallet extension. The normal SDK runtime handles connection, Friend selection and fresh ownership verification on Robinhood chain 4663 (hardwired Generations NFT, generation >=1). No live RF transaction or signing secret is needed. Real-wallet gameplay remains unverified.
+Open http://127.0.0.1:4173 in a browser with the eligible wallet extension. The normal SDK runtime handles connection, Friend selection and fresh ownership verification on Robinhood chain 4663 (hardwired Generations NFT, generation >=1). No live RF transaction or signing secret is needed. G1 real-wallet gameplay passed owner testing on desktop and mobile.
 
 This machine uses a local npm download because npm was absent from PATH: `node .tooling/package/bin/npm-cli.js run dev`. That ignored tooling folder is not needed on a machine with npm installed. Native Windows verification passed with esbuild/browser processes outside the filesystem sandbox; the upstream documented Windows route is Ubuntu/WSL2.
 
@@ -21,7 +27,7 @@ This machine uses a local npm download because npm was absent from PATH: `node .
 
 Buy permit → Send expedition → settle → reveal actual owned object → Keep → Place on plinth 1 → Begin tour → Direct Friend to plinth 1 → Present → Opening Remarks.
 
-Tab and Enter/Space or pointer/touch operate the same visible controls. The Friend changes position immediately; arrival never presents automatically. Runtime menus pause local gameplay. There is no audio. At narrow widths, scroll within the fixed 3:2 game frame to reach controls.
+Tab and Enter/Space or pointer/touch operate the same visible controls. The Friend changes position immediately; arrival never presents automatically. Runtime menus pause local gameplay. There is no audio. The desktop frame is 960 × 640; the narrow host frame grows vertically so the G1 controls remain visible without scrolling inside the game.
 
 RF is simulated. Keep, placement and tours make no economic mutations. The SDK owns aggregate inventory. Full runtime reload resets the session; child reload re-reads retained ledger state but does not restore local arrangements.
 
@@ -42,4 +48,4 @@ FriendSDK **0.1.4**, upstream commit **ca3bf183b809ecf22d87c63d88ce03969a3f8da2*
 
 Canonical Friend artwork: Rare Friends via the SDK sprite API; see the installed SDK NOTICE.md. Object silhouettes and museum interface are project-authored CSS.
 
-Start the canonical context at [CONTEXT_INDEX](docs/vibeathon/CONTEXT_INDEX.md). [STATUS](docs/vibeathon/STATUS.md) records progress; [ROADMAP](docs/vibeathon/ROADMAP.md) controls scope. No public preview or submission is claimed.
+Start the canonical context at [CONTEXT_INDEX](docs/vibeathon/CONTEXT_INDEX.md). [STATUS](docs/vibeathon/STATUS.md) records progress; [ROADMAP](docs/vibeathon/ROADMAP.md) controls scope. GitHub Pages hosts the G1 preview; no completed submission is claimed.

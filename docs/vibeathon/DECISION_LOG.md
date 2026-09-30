@@ -296,3 +296,33 @@ Paths in SOURCE are relative to docs/vibeathon unless noted. The Phase 1D instru
 - STATUS: LOCKED EXECUTION POLICY
 - SOURCE: Explicit Phase 2 owner request, 2026-09-30; ROADMAP.md
 - EXECUTION ALLOWANCES: Audio is optional, with mute mandatory if any audio survives. Walking/reveal/spotlight decoration may be cut in favor of immediate destination changes while canonical Friend art and explicit Present remain mandatory. Minimum finale may adapt the existing one/two-copy predicates to a feasible subset of any nonempty owned inventory; additional locked three-copy final variants are optional. Sophisticated recovery presentation may be cut, never safe reconciliation. PRODUCT_SPEC's deadline overlay records these allowances; no replacement product systems or new economy/identity behavior are authorized.
+
+## D-030
+
+- ID: D-030
+- DATE: 2026-09-30
+- DECISION: Publish the current G1 playable preview to GitHub Pages at the owner's explicit request, before G2 expansion and before full G3 completion.
+- RATIONALE: Give the owner a public HTTPS preview for evaluation.
+- STATUS: AUTHORIZED — preview publication only
+- SOURCE: Owner request: “Tôi muốn bạn public lên github.io dưới dạng playable preview”.
+- BOUNDARY: Publish the complete static FriendSDK build to gh-pages. Preserve real identity gating, simulated RF and session reset. This does not authorize G2, establish real-wallet verification or claim submission-candidate readiness.
+
+## D-031
+
+- ID: D-031
+- DATE: 2026-09-30
+- DECISION: Correct G1 frame fit before G2. Keep the 960 × 640 desktop host; use the SDK-supported 3:4 host aspect ratio at widths up to 500px, with the museum scene and required controls fitting above the runtime toolbar without child scrolling. Show Expedition terms in a contained panel.
+- RATIONALE: Owner playtest found desktop term overflow and a clipped, unusable mobile action area in the default 3:2 host frame. Measured mobile child height was 238px with the runtime toolbar starting around y=196; header plus room already reached y=321.
+- STATUS: G1 RESPONSIVE HOTFIX — OWNER RECHECK REQUIRED
+- SOURCE: Explicit Phase 3A.1 owner request and browser geometry evidence.
+- BOUNDARY: Layout and presentation only; no G2 mechanics, SDK economy changes or alternative wallet behavior.
+
+## D-032
+
+- ID: D-032
+- DATE: 2026-09-30
+- DECISION: Owner confirms G1 real-wallet gameplay, eligible ownership, canonical Friend art and public preview pass on desktop and mobile; authorizes bounded Phase 3B G2 implementation and one public G2 playtest candidate.
+- RATIONALE: The owner completed the responsive G1 playtest and removed real-wallet gameplay as a validation blocker.
+- STATUS: G1 PASS; G2 AUTHORIZED — owner G2 playtest still required
+- SOURCE: Explicit Phase 3B owner instruction, 2026-09-30.
+- BOUNDARY: Simulated RF only. Complete minimum G2, deploy once through the existing gh-pages path, then stop before G3 or optional polish.

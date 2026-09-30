@@ -39,7 +39,7 @@ RF enables expeditions. SDK outcomes become owned aggregate inventory. Keeping p
 REAL_WALLET_TEST_CAPABILITY: AVAILABLE
 - Eligible Rare Friend wallet available: YES
 - Real-wallet validation planned: YES
-- Real-wallet gameplay verified: NO
+- Real-wallet gameplay verified: YES — owner-confirmed on desktop and mobile in the G1 public preview
 - Secrets stored in repository: NEVER
 
 Later QA must use the normal browser wallet/runtime flow. Do not record addresses unless explicitly requested. No wallet connection is part of Phase 1D.
@@ -49,4 +49,3 @@ Later QA must use the normal browser wallet/runtime flow. Do not record addresse
 No permanent progression/persistence, extra rooms/construction, backend, crafting/upgrades/powers, extra currencies, trading/minting/wearables, multiplayer/leaderboards, custom wallets/checkout or live contracts.
 
 Read [PRODUCT_SPEC.md](PRODUCT_SPEC.md) for complete rules and [STATUS.md](STATUS.md) for the current phase.
-
