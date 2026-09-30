@@ -1,0 +1,317 @@
+Historical Phase 0 run log copied on 2026-09-30. 7 address/key-shaped hexadecimal test value(s) redacted to honor Phase 1D no-wallet-address/secret recording rules. Original source remains unchanged. See SOURCE_PROVENANCE.md.
+
+FriendSDK baseline verification — 2026-09-30
+
+===== npm-ci =====
+
+added 24 packages in 6m
+npm notice
+npm notice New major version of npm available! 10.9.2 -> 12.1.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.1.0
+npm notice To update run: npm install -g npm@12.1.0
+npm notice
+
+===== build =====
+
+> @rarefriends/friendsdk@0.1.4 build
+> tsc -p tsconfig.json && node scripts/build-fishing.mjs && node scripts/build-embedded.mjs
+
+X [ERROR] Cannot read directory "../../../../../..": Access is denied.
+
+X [ERROR] Could not resolve "./examples/fishing/index.tsx"
+
+  Use the relative path "././examples/fishing/index.tsx" to reference the file "examples/fishing/index.tsx". Without the leading "./", the path "./examples/fishing/index.tsx" is being interpreted as a package path instead.
+
+C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1752
+  let error = new Error(text);
+              ^
+
+Error: Build failed with 2 errors:
+error: Cannot read directory "../../../../../..": Access is denied.
+error: Could not resolve "./examples/fishing/index.tsx"
+    at failureErrorWithLog (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1752:15)
+    at C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1211:25
+    at C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1163:52
+    at buildResponseToResult (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1209:7)
+    at C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1236:16
+    at responseCallbacks.<computed> (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:886:9)
+    at handleIncomingPacket (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:941:12)
+    at Socket.readFromStdout (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:864:7)
+    at Socket.emit (node:events:509:28)
+    at addChunk (node:internal/streams/readable:563:12) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
+
+Node.js v24.19.0
+
+===== build-elevated =====
+
+> @rarefriends/friendsdk@0.1.4 build
+> tsc -p tsconfig.json && node scripts/build-fishing.mjs && node scripts/build-embedded.mjs
+
+Built the shared fishing component and internal standalone test fixture.
+Built the sandboxed fishing frame, embedded host starter and isolated test fixture.
+
+===== typecheck =====
+
+> @rarefriends/friendsdk@0.1.4 typecheck
+> tsc -p tsconfig.json --noEmit && tsc -p examples/tsconfig.json
+
+
+===== check-games =====
+C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\examples\fishing: valid; expected reward 900000000000000000; maximum 10000000000000000000 RF base units; build 537966 bytes
+C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\examples\scrolling-world: valid; expected reward 1000000000000000000; maximum 1000000000000000000 RF base units; build 284505 bytes
+C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\examples\starter: valid; expected reward 900000000000000000; maximum 3000000000000000000 RF base units; build 404048 bytes
+
+===== check-starter =====
+PASS generic starter 1100px: canonical artwork, keyboard/touch, world interactions, buy/open/keep/redeem, pending recovery, mute/reduced motion, container bounds.
+PASS generic starter 360px: canonical artwork, keyboard/touch, world interactions, buy/open/keep/redeem, pending recovery, mute/reduced motion, container bounds.
+PASS generic starter canonical artwork failure and retry.
+
+===== check-runtime =====
+PASS public runtime 1100px: connection, owner-indexed discovery, fresh gate, sandbox, simulated purchase, account/network/disconnect cancellation, container bounds.
+PASS public runtime 360px: connection, owner-indexed discovery, fresh gate, sandbox, simulated purchase, account/network/disconnect cancellation, container bounds.
+PASS public runtime eligibility failure: unowned.
+PASS public runtime eligibility failure: unhardwired.
+PASS public runtime eligibility failure: owner-changed.
+PASS public runtime eligibility failure: rpc-error.
+
+===== unit-tests =====
+✔ image loading exposes success, failure and cancellation without stale callbacks (6.8631ms)
+✔ world loading preserves object positions and render order (19.8493ms)
+✔ construction is inert; one-block reads use only the canonical Friend RF balance (20.4244ms)
+✔ cold writes reject mismatched deployment, wrong chain and changed signing account (19.2938ms)
+✔ fresh reads still verify ownership, hardwiring and canonical wallet binding (11.7091ms)
+✔ owner signs exact approval through the Friend wallet and never buys automatically (50.8769ms)
+✔ warm fixed actions reach the wallet with no public RPC preflight or simulation (79.2679ms)
+✔ wallet account and network changes block warm signing without public RPC reads (2.6398ms)
+✔ contract execution rejects stale ownership instead of SDK ownership preflight (4.1295ms)
+✔ successful purchase binds RF payer and consumable mint to the canonical Friend wallet (42.0064ms)
+✔ failed, unknown, replaced or reorganized receipts never return success (16.1076ms)
+✔ play IDs come from confirmed events and must match stored Friend and randomness batch (18.1135ms)
+✔ settlement result must agree with stored play and actual minted item (59.0746ms)
+✔ redemption burns the kept item and pays RF to the Friend rather than its owner (30.1982ms)
+✖ game validation accepts SDK CSS exports but rejects unrelated sources and host imports (6687.6695ms)
+﹣ local Anvil: deploy/resume without an NFT, then canonical wallet play, Dice resume and redemption (4.8609ms) # Install Foundry/Anvil to run local contract integration.
+Deployment submitted: [REDACTED_HEX_TEST_VALUE]
+approval submitted: [REDACTED_HEX_TEST_VALUE]
+fund submitted: [REDACTED_HEX_TEST_VALUE]
+approval submitted: [REDACTED_HEX_TEST_VALUE]
+fund submitted: [REDACTED_HEX_TEST_VALUE]
+approval submitted: [REDACTED_HEX_TEST_VALUE]
+approval submitted: [REDACTED_HEX_TEST_VALUE]
+✔ hidden key input never echoes, restores terminal mode, and rejects non-TTY input (14.8566ms)
+✔ key cancellation restores raw mode and arguments cannot supply a secret (17.1982ms)
+✔ constructor encodes only existing dependencies and JSON outcome metadata (1.669ms)
+✔ deployment preflight needs funding and dependencies but no NFT ownership or canonical wallet (39.1323ms)
+✔ receipts reject failures, replacements, wrong chains and reorganizations (3.291ms)
+✔ confirmed deployment is saved independently of funding without serializing signer secrets (11.5469ms)
+✔ funding uses exact approval and verifies both receipts; resume never funds twice (48.1486ms)
+✔ a prior successful approval is repeated when the current allowance no longer matches (16.5014ms)
+✔ funding does not claim success for missing events or a reverted approval (15.9444ms)
+✔ resolver requests Dice once, settles the committed play, and reuses a settled result (23.8017ms)
+✔ resolver keeps an unfulfilled request pending without paying again or inventing an outcome (2.5536ms)
+✔ resolver requires a new confirmation if the Dice fee exceeds the approved quote (1.1125ms)
+✖ manifest persists exact base-unit strings with restricted permissions and rejects substituted deployments (267.1425ms)
+✔ private frame actions require host approval and stay bound to its Friend (163.7726ms)
+✔ rejected confirmations and invalid quantities do not change a ledger (12.5501ms)
+✔ closing a session while confirmation waits prevents a later approval from spending (10.9973ms)
+✔ host menus pause new spending and a pending confirmation cannot be flooded (11.1102ms)
+✔ arbitrary transactions and caller-selected Friend IDs are not bridge methods (9.6931ms)
+✔ live actions return their confirmed result without waiting for another state read (12.8041ms)
+✔ private RPC and wallet diagnostics stay in the trusted host, never in the game response (11.0074ms)
+✔ transaction recovery preserves only validated status and hash, never raw provider messages (26.6121ms)
+✔ all ten original cues render deterministic non-silent PCM with bounded peaks and silent endpoints (3334.1139ms)
+✔ rounded select timbre matches independently calculated Python source samples (7.4783ms)
+✔ SSR and unsupported browsers stay silent without allocations or thrown resume errors (39.9864ms)
+✔ explicit unlock creates one context, never queues locked sounds and reuses decoded buffers (37.9049ms)
+✔ polyphony is bounded, delayed cues stop, and mute or zero volume cancels every voice (203.9305ms)
+✔ repeated gesture unlock keeps an enabled kit playable within the same event (14.8568ms)
+✔ stop, mute, hide and disposal invalidate an unresolved unlock without stale playback (22.5059ms)
+✔ a new gesture can unlock after cancellation while an older resume is still unresolved (5.7896ms)
+✔ resume rejection permits a retry; visibility and pagehide stop sounds without replaying them (202.7027ms)
+✔ invalid control values are rejected without allocating audio or bypassing gain limits (10.7482ms)
+✔ provenance records the two trailer sources and the runtime bundles without audio files or dependencies (2007.1458ms)
+✔ all twelve complete/loading worlds preserve canonical vector artwork and never load snapshot actors (161.3992ms)
+✔ projection retains the canonical camera and can invert screen motion and lift (3.3103ms)
+✔ optional game colors preserve all world geometry, masks, depth order and canonical Friend pixels (63.5374ms)
+✔ land membership preserves courtyard holes, disjoint islands and every missing-chunk stage (18.0576ms)
+✔ walkability blocks water, scaled prop footprints and game rectangles while preserving decorative props (4.2ms)
+✔ malformed scenes fail before producing markup, including invalid numbers, types, props and anchors (6.5354ms)
+✔ caller-supplied actor pixels stay upright with clipped integer halo and depth-sort with props (4.1928ms)
+✔ layers are self-contained, contain only requested static art, and preserve depth order (7.2133ms)
+✔ text metadata is escaped and reusable props carry their transparent canvas and ground anchor (4.7406ms)
+X [ERROR] Could not resolve "/C:/Users/DELL/Documents/Codex/2026-09-30/to/work/friendsdk/src/friend-world.ts"
+
+✖ the complete SDK bundles for browsers without Node runtime or character snapshot dependencies (1178.0354ms)
+✖ game validation accepts creator SVG/PNG art without a world renderer and retains source boundaries (5246.667ms)
+✔ fishing JSON has exact probabilities, boundaries, maximum prize and 90% expected return (14.4942ms)
+✔ underfunded games take no RF and funding enables a purchase without an arbitrary minimum (4.3201ms)
+✔ unused bait stays backed and playable after all free stake is withdrawn (5.2766ms)
+✔ concurrent purchases cannot reuse backing; rejected batch is atomic (1.9979ms)
+✔ settlement releases only the unused prize reserve and cannot reroll (8.7075ms)
+✔ kept rewards have no expiry input and remain fully reserved through subsequent play (1.6831ms)
+✔ invalid preview draw leaves the committed play intact; boots are permanent collectibles (9.1314ms)
+✔ a different chance game uses only configuration with the same client (0.8614ms)
+✔ bitmap orientation preserves every corner and never wraps pixels across rows (5.2062ms)
+✔ all 64 slots retain action, direction and gait index without coercion (30.8245ms)
+✔ Colossus vertical fallback is explicit, selectable and retains idle versus walk (29.8613ms)
+✔ invalid token IDs and malformed results fail before caching or network reads (7.4443ms)
+✔ immutable reads coalesce, retry RPC failures and reject a chain switch even on cache hits (73.1976ms)
+✔ cache keys distinguish chain, registry and full-width token ID (0.9368ms)
+✔ eligibility requires only current ownership of a hardwired Generations NFT at one block (16.7064ms)
+✔ live reads recover only selected Friend history and retain confirmed outcome IDs without local randomness (30.0564ms)
+✔ live reads reject mismatched deployment economics and Dice dependencies before signing (9.763ms)
+✔ purchase approves exact canonical-wallet allowance, then pays through the verified transport (55.7688ms)
+✔ session invalidation before the wallet prompt or after approval prevents every subsequent write (16.6403ms)
+✔ a pending cast cannot consume another purchased consumable (18.9553ms)
+✔ Dice request uses its exact bounded fee once, pending retries reuse it, and fulfillment settles the same cast (12.2268ms)
+✔ excessive fees and unverified receipts cannot trigger another Dice payment (10.6057ms)
+✔ trusted Friend funding verifies the exact canonical-wallet transfer and rejects stale sessions (5.8506ms)
+✔ initialized actions use session metadata without repeated ownership, balances, history or simulations (59.8376ms)
+✔ funding uses the verified canonical wallet without contract reads or simulation before signing (5.6414ms)
+﹣ local Anvil: live adapter funds canonical wallet, buys, recovers pending cast, sponsors Dice once and redeems (0.9545ms) # Build local contracts and install Anvil for this integration.
+✔ arrows and WASD normalize diagonal speed and cancel opposite directions (115.6429ms)
+✔ click route avoids a blocking wall and reaches its destination without crossing it (86.7867ms)
+✔ manual input cancels navigation; stop clears held keys and suspended tabs do not teleport (11.8466ms)
+✔ discovers only owner-filtered held IDs, handles self transfers, excludes generation zero, and uses canonical wallets (15.1343ms)
+✔ paginates canonical owner-filtered history at the public RPC block limit (1.8938ms)
+✔ custom deployments without a known transfer start retain block-zero discovery (2.2574ms)
+✔ zero NFT balance requires no history or per-token reads (0.894ms)
+✔ refused log range and truncated history remain errors without collection scan fallback (1.9779ms)
+✔ fresh calls reread eligibility and reject ownership, wallet, and network failures (3.2578ms)
+✔ invalid addresses, malformed events and aborted discovery fail closed (2.321ms)
+✔ cancellation while discovery is pending never returns an old account result (2.1594ms)
+✔ live runner retains only public deployment fields and validates configuration (11.865ms)
+✔ explicit live builds do not bundle full deployment records or pass deployment to the game (3906.6748ms)
+✔ runner rejects malformed network flags before starting a server (60711.0857ms)
+✔ preview and live CLI outputs remain separate, portable static bundles with no private records (31932.2674ms)
+✔ installed-style CLI creates and builds a game in the current project and refuses to overwrite it (47238.5608ms)
+✔ preview server serves sandbox assets with CORS and never exposes project source (8522.369ms)
+✔ builds reject project roots and mixed directories, but upgrade clean legacy outputs (7998.1166ms)
+X [ERROR] EPERM: operation not permitted, rename 'C:\Users\DELL\AppData\Local\Temp\friendsdk-watch-WS6iZN\.friendsdk\.friendsdk-output.json.tmp' -> 'C:\Users\DELL\AppData\Local\Temp\friendsdk-watch-WS6iZN\.friendsdk\.friendsdk-output.json' [plugin friendsdk-output-files]
+
+  This error came from the "onEnd" callback registered here:
+
+    C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1426:20:
+      1426 │       let promise = setup({
+           ╵                     ^
+
+    at setup (file:///C:/Users/DELL/Documents/Codex/2026-09-30/to/work/friendsdk/scripts/dev-game.mjs:106:13)
+    at handlePlugins (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1426:21)
+    at buildOrContextImpl (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1139:5)
+    at Object.buildOrContext (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:963:5)
+    at C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:2329:68
+    at new Promise (<anonymous>)
+    at Object.context (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:2329:27)
+    at context (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:2171:58)
+    at buildGame (file:///C:/Users/DELL/Documents/Codex/2026-09-30/to/work/friendsdk/scripts/dev-game.mjs:154:19)
+
+✖ watch rebuilds register newly emitted assets while unrelated files stay private (11105.9678ms)
+✔ wallet restoration is read-only and snapshots remain stable until changes (50.8567ms)
+✔ unsupported networks block connected status, malformed networks fail closed (5.7071ms)
+✔ account and chain changes invalidate synchronously before fresh reads resolve (8.9092ms)
+✔ disconnect prevents an in-flight connection from restoring identity (3.1514ms)
+✔ selecting another discovered wallet fences old connections and detaches its events (8.4533ms)
+✔ discovery names injected wallets once and local disconnect survives late discovery (2.599ms)
+✔ a supplied provider reuses the project's connection without discovering another flow (13.1074ms)
+✔ disposal cancels pending identity, subscriptions and all provider listeners (7.3494ms)
+✔ missing wallets and rejected connection provide recoverable states without signatures (8.0435ms)
+✔ the default public client requires neither a key nor a wallet transport (8.0505ms)
+✔ network switch is explicit, uses pinned chain, and rereads a wallet without events (4.5884ms)
+✔ unknown network is added with official settings then explicitly selected (8.4804ms)
+✔ declined and unsupported switches remain retryable; success never assumes chain changed (24.0901ms)
+✔ network-switch completion cannot revive disconnected, disposed or changed sessions (9.8296ms)
+ℹ tests 118
+ℹ suites 0
+ℹ pass 111
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 2
+ℹ todo 0
+ℹ duration_ms 114327.9971
+
+✖ failing tests:
+
+test at tests\check-games.test.mjs:11:1
+✖ game validation accepts SDK CSS exports but rejects unrelated sources and host imports (6687.6695ms)
+  Error: EPERM: operation not permitted, symlink 'C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\dist' -> 'C:\Users\DELL\AppData\Local\Temp\friendsdk-validator-mKMXH0\dist'
+      at async symlink (node:internal/fs/promises:1059:10)
+      at async TestContext.<anonymous> (file:///C:/Users/DELL/Documents/Codex/2026-09-30/to/work/friendsdk/tests/check-games.test.mjs:19:7)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    errno: -4048,
+    code: 'EPERM',
+    syscall: 'symlink',
+    path: 'C:\\Users\\DELL\\Documents\\Codex\\2026-09-30\\to\\work\\friendsdk\\dist',
+    dest: 'C:\\Users\\DELL\\AppData\\Local\\Temp\\friendsdk-validator-mKMXH0\\dist'
+  }
+
+test at tests\contracts-cli.test.mjs:210:1
+✖ manifest persists exact base-unit strings with restricted permissions and rejects substituted deployments (267.1425ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  438 !== 384
+  
+      at TestContext.<anonymous> (file:///C:/Users/DELL/Documents/Codex/2026-09-30/to/work/friendsdk/tests/contracts-cli.test.mjs:215:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 438,
+    expected: 384,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\friend-world.test.mjs:243:1
+✖ the complete SDK bundles for browsers without Node runtime or character snapshot dependencies (1178.0354ms)
+  Error: Build failed with 1 error:
+  error: Could not resolve "/C:/Users/DELL/Documents/Codex/2026-09-30/to/work/friendsdk/src/friend-world.ts"
+      at failureErrorWithLog (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1752:15)
+      at C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1211:25
+      at C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1163:52
+      at buildResponseToResult (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1209:7)
+      at C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:1236:16
+      at responseCallbacks.<computed> (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:886:9)
+      at handleIncomingPacket (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:941:12)
+      at Socket.readFromStdout (C:\Users\DELL\Documents\Codex\2026-09-30\to\work\friendsdk\node_modules\esbuild\lib\main.js:864:7)
+      at Socket.emit (node:events:509:28)
+      at addChunk (node:internal/streams/readable:563:12) {
+    errors: [ { detail: undefined, id: '', location: null, notes: [], pluginName: '', text: 'Could not resolve "/C:/Users/DELL/Documents/Codex/2026-09-30/to/work/friendsdk/src/friend-world.ts"' } ],
+    warnings: []
+  }
+
+test at tests\game-assets.test.mjs:13:1
+✖ game validation accepts creator SVG/PNG art without a world renderer and retains source boundaries (5246.667ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /games\/custom-art: valid;/. Input:
+  
+  'C:\\Users\\DELL\\AppData\\Local\\Temp\\friendsdk custom art PGrh1s\\games\\custom-art: valid; expected reward 900000000000000000; maximum 3000000000000000000 RF base units; build 666 bytes\n'
+  
+      at TestContext.<anonymous> (file:///C:/Users/DELL/Documents/Codex/2026-09-30/to/work/friendsdk/tests/game-assets.test.mjs:31:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'C:\\Users\\DELL\\AppData\\Local\\Temp\\friendsdk custom art PGrh1s\\games\\custom-art: valid; expected reward 900000000000000000; maximum 3000000000000000000 RF base units; build 666 bytes\n',
+    expected: /games\/custom-art: valid;/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests\runner.test.mjs:95:1
+✖ watch rebuilds register newly emitted assets while unrelated files stay private (11105.9678ms)
+  AssertionError [ERR_ASSERTION]: The watch rebuild must register its new hashed asset
+      at TestContext.<anonymous> (file:///C:/Users/DELL/Documents/Codex/2026-09-30/to/work/friendsdk/tests/runner.test.mjs:119:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+Browser inspection: http://127.0.0.1:4173 served the normal Local preview / Choose your Friend screen. No browser wallet found. No warning/error console entries captured. No real wallet was connected.

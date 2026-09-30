@@ -1,0 +1,25 @@
+# Future dependencies and generated outputs
+node_modules/
+.friendsdk/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Local environment and sensitive material must never be committed
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+wallet-exports/
+secrets/
+
+# Editor / operating system
+.DS_Store
+Thumbs.db
+*.swp
+
