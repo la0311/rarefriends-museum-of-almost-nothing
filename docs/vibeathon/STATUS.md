@@ -56,14 +56,14 @@ Phase 3B.1 UI/UX and final public real-wallet smoke are owner-verified PASS. No 
 
 ## Current limitations / validation debt
 
-- G1 real-wallet identity/gameplay, eligible ownership and canonical artwork passed owner testing on desktop and mobile. G2-specific real-wallet behavior remains for the G2 owner playtest.
+- Real-wallet identity/gameplay, eligible ownership and canonical artwork passed owner testing on desktop and mobile; the final G3 public Token Activity smoke also passed owner verification.
 - The Phase 3A.1 layout hotfix removes required child scrolling at 360px and passed the owner's real-wallet recheck.
 - Movement/reveal are immediate and silent. Rules remain identical under reduced motion.
 - Final G2 terms: permit 6 RF; weights 40/35/15/10%; fixed values 2/2/3/4 RF. Weighted expected redemption 2.35 RF. Initial 20 RF funds three permits and leaves 2 RF; two common 2 RF redemptions can fund another permit, subject to SDK backing.
 - Native Windows esbuild failed inside filesystem sandbox, passed outside it. Matching Playwright Chromium installed. No Ubuntu WSL distribution available. Unrelated historical SDK Windows failures were not rerun or repaired.
 - Full runtime reset loses session; child reload loses local placement/tour. Uncertain read failure blocks mutations pending successful Retry; no automatic economic retry.
 - In Phase 3B.1, a child-only reload also rerolls the local target and loses local Token Activity counters while the SDK ledger survives. Random outcomes plus the unchanged 20 simulated RF opening balance can leave a target unattainable in a particular session; no compensating economy or fallback finale was authorized.
-- Event cutoff/timezone, source publication and submission fields still need shipping-phase verification. G1 public preview deployment was authorized separately under D-030; G2 is now authorized.
+- The organizer's exact event cutoff time and timezone remain TBA. The source is public, the final preview is verified, and the submission PR is open.
 
 ## G1 GitHub Pages preview
 
