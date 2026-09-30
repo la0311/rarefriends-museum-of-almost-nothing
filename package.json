@@ -1,0 +1,25 @@
+{
+  "name": "rarefriends-museum-of-almost-nothing",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "friendsdk dev games/museum-of-almost-nothing",
+    "build": "friendsdk build games/museum-of-almost-nothing",
+    "check": "friendsdk check games/museum-of-almost-nothing",
+    "typecheck": "tsc --noEmit",
+    "test:game": "node tests/museum.mjs"
+  },
+  "dependencies": {
+    "@rarefriends/friendsdk": "https://github.com/spokesz/friendsdk/releases/download/v0.1.4/rarefriends-friendsdk-0.1.4.tgz",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "playwright": "1.63.0",
+    "typescript": "6.0.3"
+  }
+}

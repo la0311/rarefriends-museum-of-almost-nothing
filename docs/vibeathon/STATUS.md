@@ -3,51 +3,52 @@
 Updated: 2026-09-30
 
 PROJECT: Museum of Almost Nothing
-CURRENT PHASE: Phase 2 — 4-Gate Emergency Implementation Roadmap
-STATE: 4-gate roadmap authored; implementation not started
+CURRENT PHASE: Phase 3A — Emergency Implementation (G0 → G1)
+STATE: First playable verified with automated SDK fixtures; owner checkpoint pending
 ROADMAP: AUTHORED
-IMPLEMENTATION: NOT STARTED
+IMPLEMENTATION: IN PROGRESS
 DEADLINE MODE: ACTIVE
-REAL WALLET TEST CAPABILITY: AVAILABLE
-REAL_WALLET_TEST_CAPABILITY: AVAILABLE
-REAL-WALLET GAMEPLAY VERIFIED: NO
-CURRENT GATE: G0 — Bootstrap
-NEXT ACTION: G0-T1
-
-## Completed
-
-- Phase 0 — SDK / Vibeathon baseline
-- Phase 1A — concept exploration
-- Phase 1B — shortlist feasibility
-- Phase 1C — product lock
-- Phase 1D — standalone context freeze
-- Phase 2 — four-gate deadline roadmap (documentation only)
+CURRENT GATE: G1 — Playable Vertical Slice
+G0: PASS
+G1: PASS — OWNER PLAYTEST REQUIRED
+FIRST PLAYABLE: AVAILABLE
+NEXT: Owner evaluates G1 before G2 expansion
+NEXT ACTION: G1-T4 — owner playtest checkpoint
 
 SELECTED CONCEPT: Museum of Almost Nothing
 SDK: v0.1.4
 PINNED COMMIT: ca3bf183b809ecf22d87c63d88ce03969a3f8da2
-CURRENT BLOCKERS: None known for completion of Phase 2 planning. Implementation prerequisites below remain unverified.
+REAL_WALLET_TEST_CAPABILITY: AVAILABLE
+REAL-WALLET GAMEPLAY VERIFIED: NO
 
-## Next action and authorization
+## Execution
 
-[ROADMAP.md](ROADMAP.md) contains 17 tasks: G0 (3), G1 (4), G2 (6), G3 (4). G0-T1 establishes the pinned official release-package standalone toolchain after the owner starts Phase 3. G0 has NOT passed. No implementation authorization is inferred from roadmap authorship.
+Latest owner instruction authorizes G0 through G1 and explicitly stops before G2. G0-T1–T3 and G1-T1–T3 implemented; G1-T4 automated checks pass, owner assessment pending. “PASS” here means technical first-playable validation, not completed human acceptance.
 
-First playable is G1, requiring the complete settled-outcome → Keep → place → direct Friend → explicit Present → local brief loop. Protect approximately the final 90 minutes of the five-hour envelope for G3; cut optional polish when that window begins. Actual event cutoff/timezone must be verified at execution start.
+Existing clean baseline commit: fb1a6a7ddce82edff11d0e1421d9f9db0ba49835. No new baseline commit was needed: all planning files were already committed with no changes. Local G1 checkpoint authorized after verification; no push authorized or performed.
 
-Integration selected: official FriendSDK v0.1.4 GitHub release .tgz dependency, independent of the old research checkout; verify exact asset/provenance against pinned commit in G0-T1. No install or resolved package lock exists yet. Exact economy values remain a bounded G2-T1 tuning task; G0/G1 schema terms are provisional.
+Official v0.1.4 release tag resolves to the pinned commit. Downloaded archive SHA-256 matches GitHub's published digest: 72dfa8b8f2e0ccb4361a38f454a0c77e9340da8cf29313fc03d5049224523cac. Standalone package-lock retains URL/integrity. No SDK edits or research-checkout dependency.
 
-D-029 records the emergency sequence and owner-authorized deadline allowances. PRODUCT_SPEC includes the synchronized execution overlay; core economy, identity and player agency rules remain locked.
+## Checks and evidence
 
-## Known validation debt
+- G0 typecheck / FriendSDK check / build: PASS.
+- G0 SDK test: PASS, [scene](evidence/g0.png).
+- G1 typecheck / FriendSDK check / build: PASS; see [execution log](evidence/PHASE_3A.md).
+- `node tests/museum.mjs`: PASS at 960px keyboard and 360px touch; normal runtime with automated-only identity/RPC/canonical-art fixtures.
+- Verified cancellation, duplicate buy protection, buy/play/settle, actual owned reveal, Keep without mutation, placement, player-directed position, explicit Present, pause lock, and unchanged RF/inventory through tour.
+- Screenshots: [reveal](evidence/g1-reveal.png), [displayed object](evidence/g1-displayed.png), [Opening Remarks](evidence/g1-complete-960.png), [narrow viewport](evidence/g1-complete-360.png).
+- Development server: http://127.0.0.1:4173. Normal entry requires owner's eligible wallet; no agent wallet interaction performed.
 
-- Eligible wallet availability is owner-confirmed; real-wallet gameplay is unexecuted. G3-T2 uses normal browser runtime with owner action; no secrets or unauthorized address recording.
-- Phase 0 native-Windows SDK unit suite: 118 total, 111 passed, five failed, two skipped. Failures: symlink EPERM, POSIX permissions, URL/path resolution, slash-sensitive assertion, unresolved watch rebuild. These are historical upstream limitations, not new-game results or a requirement to repair the entire SDK.
-- Documented Ubuntu/WSL2 route remains relevant for targeted toolchain failures; do not spend shipping time on unrelated broad suites.
-- Phase 0 build/typecheck/example and targeted runtime/starter browser checks passed historically. No current Museum build, gameplay, touch, wallet or public-host validation exists.
-- Exact release asset/provenance, local supported package/toolchain, hosting access/source URL, builder/contact/category and event cutoff/timezone need execution-time verification. Simulated Token Activity judging clarification and historical SDK/art guidance conflicts remain delivery questions; no organizer confirmation is claimed.
+## Owner checkpoint
 
-## Phase 2 verification
+Evaluate expedition → object → Keep clarity; placement; destination + Present agency; separate RF/tour results; confirmation overhead. Do not begin G2 until owner evaluation/instruction.
 
-Standalone Git root and main branch verified read-only. Initial working tree: untracked .gitignore, AGENTS.md, README.md and docs/. No gameplay or ROADMAP existed before this task. Documentary SDK pin, Museum-only scope and AVAILABLE wallet capability confirmed.
+## Current limitations / validation debt
 
-Created ROADMAP; synchronized canonical deadline allowances and decision/status documents. No gameplay scaffold, dependency install, SDK source mutation/copy, wallet connection, deployment, remote, push or commit performed. Documentation remains untracked; no autonomous commit authorization.
+- Real-wallet identity/gameplay unverified; automated fixtures do not establish ownership or real network reliability. Reserved full validation remains G3.
+- Narrow frame requires vertical scrolling; touch loop passes, deeper mobile polish is outside G1.
+- Movement/reveal are immediate and silent. Rules remain identical under reduced motion.
+- Provisional G1 terms: permit 6 RF; weights 40/35/15/10%; fixed values 2/2/3/4 RF. G2-T1 balance review pending.
+- Native Windows esbuild failed inside filesystem sandbox, passed outside it. Matching Playwright Chromium installed. No Ubuntu WSL distribution available. Unrelated historical SDK Windows failures were not rerun or repaired.
+- Full runtime reset loses session; child reload loses local placement/tour. Uncertain read failure blocks mutations pending successful Retry; no automatic economic retry.
+- Event cutoff/timezone, hosting/source publication and submission fields still need shipping-phase verification. No deployment or G2 work performed.
