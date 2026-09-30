@@ -4,7 +4,7 @@ Updated: 2026-09-30
 
 PROJECT: Museum of Almost Nothing
 CURRENT PHASE: G3 — Final Ship
-STATE: Final validation and public preview PASS; submission in progress
+STATE: G3 shipped; public source and preview current; organizer submission PR open
 ROADMAP: AUTHORED
 IMPLEMENTATION: PHASE 3B.1 COMPLETE
 DEADLINE MODE: ACTIVE
@@ -13,11 +13,11 @@ G0: PASS
 G1: PASS — REAL WALLET VERIFIED DESKTOP + MOBILE
 G2: PASS
 TOKEN ACTIVITY PASS: PASS — owner UI/UX verified
-G3: IN PROGRESS — final checks and real-wallet smoke PASS; organizer PR pending
+G3: PASS — final checks, public preview, real-wallet smoke and organizer PR complete
 FIRST PLAYABLE: AVAILABLE
 MOBILE: PASS — owner real-wallet playtest
-NEXT: Publish final source and open organizer submission PR
-NEXT ACTION: Finish G3 submission and record PR URL
+NEXT: Await organizer review
+NEXT ACTION: Monitor submission PR only if the owner requests follow-up
 
 SELECTED CONCEPT: Museum of Almost Nothing
 SDK: v0.1.4
@@ -30,7 +30,7 @@ FINAL REAL-WALLET SMOKE: PASS — owner verified on public Token Activity build;
 PUBLIC PREVIEW: AVAILABLE — https://la0311.github.io/rarefriends-museum-of-almost-nothing/
 PUBLIC PREVIEW REVISION: gh-pages a8e742c70b36beb5cf9c28ff36844ed2ace878a8
 SOURCE: https://github.com/la0311/rarefriends-museum-of-almost-nothing
-SUBMISSION: organizer PR pending
+SUBMISSION: OPEN — https://github.com/spokesz/rarefriends-vibeathon/pull/137
 
 ## Execution
 
@@ -108,3 +108,4 @@ Owner playtest found the original desktop terms overflowing and the original 360
 - Final public real-wallet smoke: PASS — owner verified eligible wallet/Friend access, Secret Exhibition, one simulated permit/expedition interaction, and usable new UI. No wallet address or secret recorded.
 - RNG limitation confirmed from the finite 20 simulated RF start, 6 RF permits, and fixed redemption values: an unlucky sequence can leave a target unattainable. The final README and submission disclose this; no mechanic was changed.
 - High-confidence credential pattern, tracked sensitive filename, and wallet-address pattern scans found no matches. Generated build and local tooling remain ignored. Submission copy explicitly discloses that no live RF is burned or spent.
+- Public source was pushed by ordinary fast-forward to `main`. Organizer fork branch `submission/museum-of-almost-nothing` contains one commit, `0e41f16a0b59c715bfb1adb2a5ab51c8367caa92`, adding only `submissions/museum-of-almost-nothing/README.md`. The [organizer PR](https://github.com/spokesz/rarefriends-vibeathon/pull/137) is open as Token Activity, with simulated RF disclosure, checks and known issues in the README and PR body.
